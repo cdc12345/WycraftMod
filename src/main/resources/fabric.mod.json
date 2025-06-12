@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "redpack",
+  "version": "${version}",
+  "name": "RedPack",
+  "description": "some tools",
+  "authors": [],
+  "contact": {},
+  "license": "GPL-3.0",
+  "icon": "assets/redpack/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-datagen": [
+      "org.cdc.redpack.client.RedpackDataGenerator"
+    ],
+    "client": [
+      "org.cdc.redpack.client.RedpackClient"
+    ],
+    "main": [
+      "org.cdc.redpack.Redpack"
+    ]
+  },
+  "mixins": [
+    "redpack.mixins.json",
+    {
+      "config": "redpack.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

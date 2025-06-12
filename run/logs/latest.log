@@ -1,0 +1,166 @@
+[12:12:49] [main/INFO] (FabricLoader/GameProvider) Loading Minecraft 1.21.4 with Fabric Loader 0.16.14
+[12:12:49] [main/INFO] (FabricLoader) Loading 43 mods:
+	- fabric-api 0.119.3+1.21.4
+	- fabric-api-base 0.4.54+b47eab6b04
+	- fabric-api-lookup-api-v1 1.6.86+b1caf1e904
+	- fabric-biome-api-v1 15.0.6+b1c29d8e04
+	- fabric-block-api-v1 1.0.31+7feeb73304
+	- fabric-block-view-api-v2 1.0.20+9c49cc8c04
+	- fabric-command-api-v1 1.2.62+f71b366f04
+	- fabric-command-api-v2 2.2.41+e496eb1504
+	- fabric-commands-v0 0.2.79+df3654b304
+	- fabric-content-registries-v0 9.1.19+25d1a67604
+	- fabric-convention-tags-v1 2.1.20+7f945d5b04
+	- fabric-convention-tags-v2 2.14.1+aebda09404
+	- fabric-crash-report-info-v1 0.3.6+7feeb73304
+	- fabric-data-attachment-api-v1 1.6.2+e99da0f704
+	- fabric-data-generation-api-v1 22.3.1+0f4e5f5504
+	- fabric-dimensions-v1 4.0.10+7feeb73304
+	- fabric-entity-events-v1 2.0.15+62245bef04
+	- fabric-events-interaction-v0 4.0.4+a4eebcf004
+	- fabric-game-rule-api-v1 1.0.63+7d48d43904
+	- fabric-gametest-api-v1 2.0.26+7feeb73304
+	- fabric-item-api-v1 11.3.0+ee91fa1f04
+	- fabric-item-group-api-v1 4.2.2+fcb9601404
+	- fabric-lifecycle-events-v1 2.5.4+bf2a60eb04
+	- fabric-loot-api-v2 3.0.38+3f89f5a504
+	- fabric-loot-api-v3 1.0.26+203e6b2304
+	- fabric-message-api-v1 6.0.26+238a33c004
+	- fabric-networking-api-v1 4.4.0+db5e668204
+	- fabric-object-builder-api-v1 18.0.14+38b0d59804
+	- fabric-particles-v1 4.0.14+7feeb73304
+	- fabric-recipe-api-v1 8.1.1+640e77ae04
+	- fabric-registry-sync-v0 6.1.11+4a9c1ece04
+	- fabric-rendering-data-attachment-v1 0.3.58+73761d2e04
+	- fabric-rendering-fluids-v1 3.1.19+7feeb73304
+	- fabric-resource-conditions-api-v1 5.0.13+203e6b2304
+	- fabric-resource-loader-v0 3.1.1+360374ac04
+	- fabric-screen-handler-api-v1 1.3.118+7feeb73304
+	- fabric-tag-api-v1 1.0.7+7d48d43904
+	- fabric-transfer-api-v1 5.4.9+efa825c904
+	- fabric-transitive-access-wideners-v1 6.3.2+56e78b9b04
+	- fabricloader 0.16.14
+	- java 21
+	- minecraft 1.21.4
+	- mixinextras 0.4.1
+[12:12:50] [main/INFO] (FabricLoader/Mixin) SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/E:/gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.5+mixin.0.8.7/22f9eb729e216a091673a574a5906dc1b9027fb3/sponge-mixin-0.15.5+mixin.0.8.7.jar Service=Knot/Fabric Env=SERVER
+[12:12:51] [main/INFO] (FabricLoader/Mixin) Loaded Fabric development mappings for mixin remapper!
+[12:12:51] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_21
+[12:12:53] [main/INFO] (FabricLoader/MixinExtras|Service) Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.4.1).
+[12:13:20] [main/INFO] (Minecraft) Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[12:13:20] [Yggdrasil Key Fetcher/ERROR] (Minecraft) Failed to request yggdrasil public key
+com.mojang.authlib.exceptions.MinecraftClientException: Failed to read from https://api.minecraftservices.com/publickeys due to api.minecraftservices.com
+	at knot/com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:111) ~[authlib-6.0.57.jar:?]
+	at knot/com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56) ~[authlib-6.0.57.jar:?]
+	at knot/com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.fetch(YggdrasilServicesKeyInfo.java:114) ~[authlib-6.0.57.jar:?]
+	at knot/com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo$1.run(YggdrasilServicesKeyInfo.java:89) ~[authlib-6.0.57.jar:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+Caused by: java.net.UnknownHostException: api.minecraftservices.com
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567) ~[?:?]
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327) ~[?:?]
+	at java.base/java.net.Socket.connect(Socket.java:751) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304) ~[?:?]
+	at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:178) ~[?:?]
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:531) ~[?:?]
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:636) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:264) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:377) ~[?:?]
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:193) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1297) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1138) ~[?:?]
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:179) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1690) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1614) ~[?:?]
+	at java.base/java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:531) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:307) ~[?:?]
+	at knot/com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:82) ~[authlib-6.0.57.jar:?]
+	... 9 more
+[12:13:28] [main/INFO] (Minecraft) Loaded 1370 recipes
+[12:13:28] [main/INFO] (Minecraft) Loaded 1481 advancements
+[12:13:28] [main/INFO] (BiomeModificationImpl) Applied 0 biome modifications to 0 of 65 new biomes in 7.348 ms
+[12:13:28] [Server thread/INFO] (Minecraft) Starting minecraft server version 1.21.4
+[12:13:28] [Server thread/INFO] (Minecraft) Loading properties
+[12:13:28] [Server thread/INFO] (Minecraft) Default game type: SURVIVAL
+[12:13:28] [Server thread/INFO] (Minecraft) Generating keypair
+[12:13:29] [Server thread/INFO] (Minecraft) Starting Minecraft server on *:25565
+[12:13:29] [Server thread/INFO] (Minecraft) Using default channel type
+[12:13:29] [Server thread/WARN] (Minecraft) **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[12:13:29] [Server thread/WARN] (Minecraft) The server will make no attempt to authenticate usernames. Beware.
+[12:13:29] [Server thread/WARN] (Minecraft) While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[12:13:29] [Server thread/WARN] (Minecraft) To change this, set "online-mode" to "true" in the server.properties file.
+[12:13:29] [Server thread/INFO] (Minecraft) Preparing level "world"
+[12:13:30] [Server thread/INFO] (Minecraft) Preparing start region for dimension minecraft:overworld
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[12:13:36] [Server thread/INFO] (Minecraft) Time elapsed: 5839 ms
+[12:13:36] [Server thread/INFO] (Minecraft) Done (6.764s)! For help, type "help"
+[12:14:36] [Server thread/INFO] (Minecraft) Server empty for 60 seconds, pausing
+[12:18:20] [Yggdrasil Key Fetcher/ERROR] (Minecraft) Failed to request yggdrasil public key
+com.mojang.authlib.exceptions.MinecraftClientException: Failed to read from https://api.minecraftservices.com/publickeys due to api.minecraftservices.com
+	at knot/com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:111) ~[authlib-6.0.57.jar:?]
+	at knot/com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56) ~[authlib-6.0.57.jar:?]
+	at knot/com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.fetch(YggdrasilServicesKeyInfo.java:114) ~[authlib-6.0.57.jar:?]
+	at knot/com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo$1.run(YggdrasilServicesKeyInfo.java:89) ~[authlib-6.0.57.jar:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+Caused by: java.net.UnknownHostException: api.minecraftservices.com
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567) ~[?:?]
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327) ~[?:?]
+	at java.base/java.net.Socket.connect(Socket.java:751) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304) ~[?:?]
+	at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:178) ~[?:?]
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:531) ~[?:?]
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:636) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:264) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:377) ~[?:?]
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:193) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1297) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1138) ~[?:?]
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:179) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1690) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1614) ~[?:?]
+	at java.base/java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:531) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:307) ~[?:?]
+	at knot/com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:82) ~[authlib-6.0.57.jar:?]
+	... 9 more
+[12:20:06] [Server thread/INFO] (Minecraft) Player742[/127.0.0.1:6123] logged in with entity id 14 at (2.5, 81.0, -6.5)
+[12:20:06] [Server thread/INFO] (Minecraft) Player742 joined the game
+[12:20:08] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 2011ms or 40 ticks behind
+[12:20:27] [Server thread/INFO] (Minecraft) Made Player742 a server operator
+[12:20:32] [Server thread/INFO] (Minecraft) [Player742: Set own game mode to Creative Mode]
+[12:20:43] [Server thread/INFO] (Minecraft) [Not Secure] <Player742> 111
+[12:21:30] [Server thread/INFO] (Minecraft) Player742 lost connection: Disconnected
+[12:21:30] [Server thread/INFO] (Minecraft) Player742 left the game
+[12:21:34] [Server thread/INFO] (Minecraft) Stopping the server
+[12:21:34] [Server thread/INFO] (Minecraft) Stopping server
+[12:21:34] [Server thread/INFO] (Minecraft) Saving players
+[12:21:34] [Server thread/INFO] (Minecraft) Saving worlds
+[12:21:35] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[12:21:36] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[12:21:36] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[12:21:36] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (world): All chunks are saved
+[12:21:36] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[12:21:36] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[12:21:36] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage: All dimensions are saved
+ft.text.HoverEvent$EntityContent@5ded4df0],insertion=Player742}], literal{111}]}
+[12:20:43] [Render thread/INFO] (Minecraft) [Not Secure] [CHAT] <Player742> 111
+[12:21:30] [Render thread/INFO] (Minecraft) Stopping!
