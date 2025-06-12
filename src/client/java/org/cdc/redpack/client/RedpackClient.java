@@ -1,12 +1,11 @@
 package org.cdc.redpack.client;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import org.cdc.redpack.utils.StringUtils;
@@ -14,24 +13,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class RedpackClient implements ClientModInitializer {
 
 	private final Logger LOG = LoggerFactory.getLogger(RedpackClient.class);
+	private final long DELAY_TIME = 20;
 
 	private boolean enableHB = false;
 	private boolean autoTpa = false;
 	private String owner = "";
+	private boolean openToPublic = false;
 
 	private boolean delay = false;
+	private boolean thursdayDelay = false;
+
+	private final Map<String, String> serverName = Map.of("gy1", "gy", "sc", "sc", "gy2", "gy2", "zy", "zy", "工业2",
+			"gy2", "工业1", "gy", "资源区", "zy", "生存区", "sc");
 
 	@Override public void onInitializeClient() {
 		LOG.info("Starting");
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
-			LOG.debug(StringUtils.getSender(text.getString()));
 			List<String> list = new ArrayList<>();
 			forEachSib(text, list);
 			if (!list.isEmpty()) {
@@ -51,8 +57,9 @@ public class RedpackClient implements ClientModInitializer {
 				return 0;
 			}));
 			commandDispatcher.register(ClientCommandManager.literal("chown")
-					.then(ClientCommandManager.argument("owner", EntityArgumentType.player()).executes(a -> {
-						owner = a.getArgument("owner", PlayerEntity.class).getName().getString();
+					.then(ClientCommandManager.argument("owner", StringArgumentType.string()).executes(a -> {
+						owner = StringArgumentType.getString(a, "owner");
+						a.getSource().sendFeedback(Text.literal("Owner is set to " + owner));
 						return 0;
 					})));
 		});
@@ -97,25 +104,68 @@ public class RedpackClient implements ClientModInitializer {
 	}
 
 	private void checkChatCommand(String game) {
-		String sender = StringUtils.getSender(game);
-		if (!sender.equals(owner)) {
+		if (owner.isEmpty()) {
 			return;
 		}
+		String sender = StringUtils.getSender(game);
 		String message = StringUtils.getMessage(game);
+		if (message.charAt(0) != '@') {
+			return;
+		}
 		String myName = MinecraftClient.getInstance().player.getName().getString();
+		LOG.info(sender);
+		LOG.info(myName);
 
 		if (MinecraftClient.getInstance().player != null) {
 			var handler = MinecraftClient.getInstance().player.networkHandler;
 			if (handler != null) {
+				var prefix = "@" + myName + " ";
+
+				var vme50 = prefix + "今天疯狂星期四,v我50";
+				if (message.startsWith(vme50)) {
+					Calendar calendar = Calendar.getInstance();
+					if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY && !thursdayDelay) {
+						handler.sendCommand("hb send-vault 50 1");
+						delayCommand();
+						thursdayDelay = true;
+						CompletableFuture.delayedExecutor(1, TimeUnit.DAYS).execute(() -> {
+							thursdayDelay = false;
+						});
+					}
+				}
+				if (!sender.equals(owner) && !openToPublic) {
+					return;
+				}
 				if (delay) {
 					return;
 				}
-				var prefix = "@" + myName + " ";
 				var comeCommand = prefix + "请来服务器";
 				if (message.startsWith(comeCommand)) {
 					String destination = message.replaceFirst(comeCommand, "");
-					handler.sendCommand(destination);
+					if (serverName.containsKey(destination)) {
+						handler.sendCommand(serverName.get(destination));
+						handler.sendChatMessage("好的，我马上到");
+						delayCommand();
+					}
+					return;
+				}
+				var tpaccept = prefix + "自动同意";
+				if (message.startsWith(tpaccept)) {
+					autoTpa = !autoTpa;
 					delayCommand();
+					return;
+				}
+				var vme = prefix + "给我钱";
+				if (message.startsWith(vme) && owner.equals(sender)) {
+					String amount = message.replaceFirst(vme, "");
+					handler.sendCommand("pay " + sender + " " + amount);
+					return;
+				}
+				var openCommand = prefix + "对公开放";
+				if (message.startsWith(openCommand)) {
+					openToPublic = !openToPublic;
+					delayCommand();
+					return;
 				}
 			}
 		}
@@ -123,7 +173,7 @@ public class RedpackClient implements ClientModInitializer {
 
 	private void delayCommand() {
 		delay = true;
-		CompletableFuture.delayedExecutor(20, TimeUnit.MILLISECONDS).execute(() -> {
+		CompletableFuture.delayedExecutor(DELAY_TIME, TimeUnit.MILLISECONDS).execute(() -> {
 			delay = false;
 		});
 	}
