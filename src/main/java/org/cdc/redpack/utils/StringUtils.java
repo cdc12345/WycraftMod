@@ -14,7 +14,7 @@ public class StringUtils {
 			return pre.replaceAll("(\\[.+?]){2}", "").trim();
 		}
 		if (isTpRequest(origin)) {
-			return origin.replace("请求传送到你这里", "").trim();
+			return origin.split("请求传送")[0].trim();
 		} else {
 			return origin;
 		}
@@ -25,6 +25,6 @@ public class StringUtils {
 	}
 
 	public static boolean isTpRequest(String origin) {
-		return origin.contains("请求传送到你这里");
+		return origin.contains("请求传送");
 	}
 }

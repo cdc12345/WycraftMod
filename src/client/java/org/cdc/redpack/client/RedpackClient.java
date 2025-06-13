@@ -135,6 +135,12 @@ public class RedpackClient implements ClientModInitializer {
 					return;
 				}
 				var prefix = "@" + myName + " ";
+				var mylocation = prefix + "你在哪";
+				if (message.startsWith(mylocation)) {
+					var pos = MinecraftClient.getInstance().player.getBlockPos();
+					handler.sendChatMessage(",X: " + pos.getX() + ",Y: " + pos.getY() + ",Z:" + pos.getZ());
+				}
+
 				var vme50 = prefix + "今天疯狂星期四,v我50";
 				if (message.startsWith(vme50)) {
 					Calendar calendar = Calendar.getInstance();
@@ -163,6 +169,7 @@ public class RedpackClient implements ClientModInitializer {
 				var tpaccept = prefix + "tp策略";
 				if (message.startsWith(tpaccept)) {
 					autoTpaPolicy = message.replaceFirst(tpaccept, "");
+					LOG.info(autoTpaPolicy);
 					delayCommand();
 					return;
 				}
