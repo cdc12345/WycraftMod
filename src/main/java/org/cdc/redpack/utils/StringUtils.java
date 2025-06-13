@@ -6,10 +6,25 @@ public class StringUtils {
 	}
 
 	public static String getSender(String origin) {
-		String pre = origin.split(">> ")[0];
-		if (pre.startsWith("[生存区]")) {
-			return pre.replaceAll("(\\[.+?]){3}", "").trim();
+		if (isMessage(origin)) {
+			String pre = origin.split(">> ")[0];
+			if (pre.startsWith("[生存区]")) {
+				return pre.replaceAll("(\\[.+?]){3}", "").trim();
+			}
+			return pre.replaceAll("(\\[.+?]){2}", "").trim();
 		}
-		return pre.replaceAll("(\\[.+?]){2}", "").trim();
+		if (isTpRequest(origin)) {
+			return origin.replace("请求传送到你这里", "").trim();
+		} else {
+			return origin;
+		}
+	}
+
+	public static boolean isMessage(String origin) {
+		return origin.contains(">> ") && origin.startsWith("[");
+	}
+
+	public static boolean isTpRequest(String origin) {
+		return origin.contains("请求传送到你这里");
 	}
 }

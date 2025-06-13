@@ -25,7 +25,7 @@ public class RedpackClient implements ClientModInitializer {
 	private final long DELAY_TIME = 20;
 
 	private boolean enableHB = false;
-	private boolean autoTpa = false;
+	private String autoTpaPolicy = "deny";
 	private String owner = "";
 	private boolean openToPublic = false;
 
@@ -51,11 +51,12 @@ public class RedpackClient implements ClientModInitializer {
 				a.getSource().sendFeedback(Text.literal("Enable AutoHB:" + enableHB));
 				return 0;
 			}));
-			commandDispatcher.register(ClientCommandManager.literal("tpauto").executes(a -> {
-				autoTpa = !autoTpa;
-				a.getSource().sendFeedback(Text.literal("AutoTpa:" + autoTpa));
-				return 0;
-			}));
+			commandDispatcher.register(ClientCommandManager.literal("tpauto")
+					.then(ClientCommandManager.argument("policy", StringArgumentType.string()).executes(a -> {
+						autoTpaPolicy = StringArgumentType.getString(a, "policy");
+						a.getSource().sendFeedback(Text.literal("AutoTpa:" + autoTpaPolicy));
+						return 0;
+					})));
 			commandDispatcher.register(ClientCommandManager.literal("chown")
 					.then(ClientCommandManager.argument("owner", StringArgumentType.string()).executes(a -> {
 						owner = StringArgumentType.getString(a, "owner");
@@ -84,12 +85,23 @@ public class RedpackClient implements ClientModInitializer {
 							handler.sendCommand(clickEvent.getValue().substring(1));
 							delayCommand();
 						}
-						if (autoTpa && clickEvent.getValue().startsWith("/cmi tpaccept")) {
-							handler.sendCommand(clickEvent.getValue().substring(1));
-							delayCommand();
-						} else if (!autoTpa && clickEvent.getValue().startsWith("/cmi tpdeny")) {
-							handler.sendCommand(clickEvent.getValue().substring(1));
-							delayCommand();
+
+						if (autoTpaPolicy.equalsIgnoreCase("deny")) {
+							if (clickEvent.getValue().startsWith("/cmi tpdeny")) {
+								handler.sendCommand(clickEvent.getValue().substring(1));
+								delayCommand();
+							}
+						} else {
+							if (clickEvent.getValue().startsWith("/cmi tpaccept")) {
+								String sender = StringUtils.getSender(text.getString());
+								LOG.info("{} 请求tp", sender);
+								if ("all".equalsIgnoreCase(autoTpaPolicy)) {
+									handler.sendCommand(clickEvent.getValue().substring(1));
+								} else if ("owner".equalsIgnoreCase(autoTpaPolicy) && owner.equals(sender)) {
+									handler.sendCommand(clickEvent.getValue().substring(1));
+								}
+								delayCommand();
+							}
 						}
 					}
 				}
@@ -104,7 +116,7 @@ public class RedpackClient implements ClientModInitializer {
 	}
 
 	private void checkChatCommand(String game) {
-		if (owner.isEmpty()) {
+		if (owner.isEmpty() || !StringUtils.isMessage(game)) {
 			return;
 		}
 		String sender = StringUtils.getSender(game);
@@ -119,8 +131,10 @@ public class RedpackClient implements ClientModInitializer {
 		if (MinecraftClient.getInstance().player != null) {
 			var handler = MinecraftClient.getInstance().player.networkHandler;
 			if (handler != null) {
+				if (delay) {
+					return;
+				}
 				var prefix = "@" + myName + " ";
-
 				var vme50 = prefix + "今天疯狂星期四,v我50";
 				if (message.startsWith(vme50)) {
 					Calendar calendar = Calendar.getInstance();
@@ -136,9 +150,6 @@ public class RedpackClient implements ClientModInitializer {
 				if (!sender.equals(owner) && !openToPublic) {
 					return;
 				}
-				if (delay) {
-					return;
-				}
 				var comeCommand = prefix + "请来服务器";
 				if (message.startsWith(comeCommand)) {
 					String destination = message.replaceFirst(comeCommand, "");
@@ -149,9 +160,9 @@ public class RedpackClient implements ClientModInitializer {
 					}
 					return;
 				}
-				var tpaccept = prefix + "自动同意";
+				var tpaccept = prefix + "tp策略";
 				if (message.startsWith(tpaccept)) {
-					autoTpa = !autoTpa;
+					autoTpaPolicy = message.replaceFirst(tpaccept, "");
 					delayCommand();
 					return;
 				}
