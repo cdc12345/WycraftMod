@@ -8,10 +8,17 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
+import org.cdc.redpack.RedPackConfig;
+import org.cdc.redpack.argument.TPPolicyArgumentType;
 import org.cdc.redpack.utils.StringUtils;
+import org.cdc.redpack.utils.TPPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -24,11 +31,6 @@ public class RedpackClient implements ClientModInitializer {
 	private final Logger LOG = LoggerFactory.getLogger(RedpackClient.class);
 	private final long DELAY_TIME = 20;
 
-	private boolean enableHB = false;
-	private String autoTpaPolicy = "deny";
-	private String owner = "";
-	private boolean openToPublic = false;
-
 	private boolean delay = false;
 	private boolean thursdayDelay = false;
 
@@ -37,6 +39,8 @@ public class RedpackClient implements ClientModInitializer {
 
 	@Override public void onInitializeClient() {
 		LOG.info("Starting");
+		loadDelayStatus();
+
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
 			List<String> list = new ArrayList<>();
 			forEachSib(text, list);
@@ -47,20 +51,23 @@ public class RedpackClient implements ClientModInitializer {
 		});
 		ClientCommandRegistrationCallback.EVENT.register((commandDispatcher, commandRegistryAccess) -> {
 			commandDispatcher.register(ClientCommandManager.literal("autohb").executes(a -> {
-				enableHB = !enableHB;
-				a.getSource().sendFeedback(Text.literal("Enable AutoHB:" + enableHB));
+				RedPackConfig.INSTANCE.enableHB = !RedPackConfig.INSTANCE.enableHB;
+				a.getSource().sendFeedback(Text.literal("Enable AutoHB:" + RedPackConfig.INSTANCE.enableHB));
+				RedPackConfig.saveConfig();
 				return 0;
 			}));
 			commandDispatcher.register(ClientCommandManager.literal("tpauto")
-					.then(ClientCommandManager.argument("policy", StringArgumentType.string()).executes(a -> {
-						autoTpaPolicy = StringArgumentType.getString(a, "policy");
-						a.getSource().sendFeedback(Text.literal("AutoTpa:" + autoTpaPolicy));
+					.then(ClientCommandManager.argument("policy", TPPolicyArgumentType.tpPolicy()).executes(a -> {
+						RedPackConfig.INSTANCE.autoTpaPolicy = TPPolicyArgumentType.getTPPolicy(a, "policy");
+						a.getSource().sendFeedback(Text.literal("AutoTpa:" + RedPackConfig.INSTANCE.autoTpaPolicy));
+						RedPackConfig.saveConfig();
 						return 0;
 					})));
 			commandDispatcher.register(ClientCommandManager.literal("chown")
 					.then(ClientCommandManager.argument("owner", StringArgumentType.string()).executes(a -> {
-						owner = StringArgumentType.getString(a, "owner");
-						a.getSource().sendFeedback(Text.literal("Owner is set to " + owner));
+						RedPackConfig.INSTANCE.owner = StringArgumentType.getString(a, "owner");
+						a.getSource().sendFeedback(Text.literal("Owner is set to " + RedPackConfig.INSTANCE.owner));
+						RedPackConfig.saveConfig();
 						return 0;
 					})));
 		});
@@ -81,12 +88,13 @@ public class RedpackClient implements ClientModInitializer {
 							continue;
 						}
 						LOG.debug("handler!=null");
-						if (enableHB && clickEvent.getValue().startsWith("/luochuanredpacket get")) {
+						if (RedPackConfig.INSTANCE.enableHB && clickEvent.getValue()
+								.startsWith("/luochuanredpacket get")) {
 							handler.sendCommand(clickEvent.getValue().substring(1));
 							delayCommand();
 						}
 
-						if (autoTpaPolicy.equalsIgnoreCase("deny")) {
+						if (RedPackConfig.INSTANCE.autoTpaPolicy == TPPolicy.DENY) {
 							if (clickEvent.getValue().startsWith("/cmi tpdeny")) {
 								handler.sendCommand(clickEvent.getValue().substring(1));
 								delayCommand();
@@ -95,9 +103,10 @@ public class RedpackClient implements ClientModInitializer {
 							if (clickEvent.getValue().startsWith("/cmi tpaccept")) {
 								String sender = StringUtils.getSender(text.getString());
 								LOG.info("{} 请求tp", sender);
-								if ("all".equalsIgnoreCase(autoTpaPolicy)) {
+								if (RedPackConfig.INSTANCE.autoTpaPolicy == TPPolicy.ALL) {
 									handler.sendCommand(clickEvent.getValue().substring(1));
-								} else if ("owner".equalsIgnoreCase(autoTpaPolicy) && owner.equals(sender)) {
+								} else if (RedPackConfig.INSTANCE.autoTpaPolicy == TPPolicy.OWNER
+										&& RedPackConfig.INSTANCE.owner.equals(sender)) {
 									handler.sendCommand(clickEvent.getValue().substring(1));
 								}
 								delayCommand();
@@ -116,7 +125,7 @@ public class RedpackClient implements ClientModInitializer {
 	}
 
 	private void checkChatCommand(String game) {
-		if (owner.isEmpty() || !StringUtils.isMessage(game)) {
+		if (RedPackConfig.INSTANCE.owner.isEmpty() || !StringUtils.isMessage(game)) {
 			return;
 		}
 		String sender = StringUtils.getSender(game);
@@ -141,19 +150,32 @@ public class RedpackClient implements ClientModInitializer {
 					handler.sendChatMessage(",X: " + pos.getX() + ",Y: " + pos.getY() + ",Z:" + pos.getZ());
 				}
 
-				var vme50 = prefix + "今天疯狂星期四,v我50";
-				if (message.startsWith(vme50)) {
-					Calendar calendar = Calendar.getInstance();
-					if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY && !thursdayDelay) {
-						handler.sendCommand("hb send-vault 50 1");
-						delayCommand();
-						thursdayDelay = true;
-						CompletableFuture.delayedExecutor(1, TimeUnit.DAYS).execute(() -> {
-							thursdayDelay = false;
-						});
+				if (!RedPackConfig.INSTANCE.owner.equals(myName)) {
+					var vme50 = prefix + "今天疯狂星期四,v我50";
+					if (message.startsWith(vme50)) {
+						Calendar calendar = Calendar.getInstance();
+						if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY && !thursdayDelay) {
+							handler.sendCommand("hb send-vault 50 1");
+							delayCommand();
+							thursdayDelay = true;
+							try {
+								Files.copy(new ByteArrayInputStream(new byte[8]),
+										RedPackConfig.getConfig().resolve(".thursdaylock"));
+							} catch (IOException e) {
+								throw new RuntimeException(e);
+							}
+							CompletableFuture.delayedExecutor(1, TimeUnit.DAYS).execute(() -> {
+								thursdayDelay = false;
+								try {
+									Files.delete(RedPackConfig.getConfig().resolve(".thursdaylock"));
+								} catch (IOException e) {
+									throw new RuntimeException(e);
+								}
+							});
+						}
 					}
 				}
-				if (!sender.equals(owner) && !openToPublic) {
+				if (!sender.equals(RedPackConfig.INSTANCE.owner) && !RedPackConfig.INSTANCE.openToPublic) {
 					return;
 				}
 				var comeCommand = prefix + "请来服务器";
@@ -168,20 +190,22 @@ public class RedpackClient implements ClientModInitializer {
 				}
 				var tpaccept = prefix + "tp策略";
 				if (message.startsWith(tpaccept)) {
-					autoTpaPolicy = message.replaceFirst(tpaccept, "");
-					LOG.info(autoTpaPolicy);
+					RedPackConfig.INSTANCE.autoTpaPolicy = TPPolicy.valueOf(
+							message.replaceFirst(tpaccept, "").toUpperCase());
+					RedPackConfig.saveConfig();
+					LOG.info(RedPackConfig.INSTANCE.autoTpaPolicy.name());
 					delayCommand();
 					return;
 				}
 				var vme = prefix + "给我钱";
-				if (message.startsWith(vme) && owner.equals(sender)) {
+				if (message.startsWith(vme) && RedPackConfig.INSTANCE.owner.equals(sender)) {
 					String amount = message.replaceFirst(vme, "");
 					handler.sendCommand("pay " + sender + " " + amount);
 					return;
 				}
 				var openCommand = prefix + "对公开放";
 				if (message.startsWith(openCommand)) {
-					openToPublic = !openToPublic;
+					RedPackConfig.INSTANCE.openToPublic = !RedPackConfig.INSTANCE.openToPublic;
 					delayCommand();
 					return;
 				}
@@ -194,5 +218,13 @@ public class RedpackClient implements ClientModInitializer {
 		CompletableFuture.delayedExecutor(DELAY_TIME, TimeUnit.MILLISECONDS).execute(() -> {
 			delay = false;
 		});
+	}
+
+	private void loadDelayStatus() {
+		Path lock = RedPackConfig.getConfig().resolve(".thursdaylock");
+		Calendar calendar = Calendar.getInstance();
+		if (Files.exists(lock) && calendar.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
+			thursdayDelay = true;
+		}
 	}
 }
