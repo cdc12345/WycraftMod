@@ -50,6 +50,7 @@ public class DropWycraftCoinCommand implements CommandBuilder {
 			//ignore the usage of creativeMode
 			return 0;
 		}
+		LOG.info(keyWord);
 		AtomicReference<ItemStack> result = new AtomicReference<>();
 		while (a.getSource().getPlayer().getInventory().contains(b -> {
 			boolean result1 = Objects.requireNonNullElse(b.getName(), Text.empty()).getString().contains(keyWord);
@@ -63,15 +64,15 @@ public class DropWycraftCoinCommand implements CommandBuilder {
 			var player = MinecraftClient.getInstance().player;
 			if (player != null) {
 				LOG.info("slot:{}", slot);
-				if (slot >= 9) {
+				if (slot >= 9 && slot < 36) {
 					InventoryScreen inventoryScreen = new InventoryScreen(player);
-					MinecraftClient.getInstance().setScreenAndRender(inventoryScreen);
+					MinecraftClient.getInstance().setScreen(inventoryScreen);
 					if (MinecraftClient.getInstance().interactionManager != null) {
 						MinecraftClient.getInstance().interactionManager.clickSlot(
 								inventoryScreen.getScreenHandler().syncId, slot, 1, SlotActionType.THROW, player);
 					}
-					MinecraftClient.getInstance().setScreenAndRender(null);
-				} else {
+					MinecraftClient.getInstance().setScreen(null);
+				} else if (slot > -1) {
 					inv.setSelectedSlot(slot);
 					player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(inv.selectedSlot));
 					MinecraftClient.getInstance().player.dropSelectedItem(true);

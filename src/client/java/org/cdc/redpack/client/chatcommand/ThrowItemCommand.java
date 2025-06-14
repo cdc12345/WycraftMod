@@ -6,11 +6,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ThrowItemCommand extends AbstractChatCommand {
+	private static final Logger LOG = LogManager.getLogger(ThrowItemCommand.class);
+
 	public ThrowItemCommand() {
 		super("丢我");
 	}
@@ -24,6 +28,7 @@ public class ThrowItemCommand extends AbstractChatCommand {
 		} else {
 			ref.itemName = args[0];
 		}
+		LOG.info(ref.itemName);
 		AtomicReference<ItemStack> result = new AtomicReference<>();
 		while (context.rob().getInventory().contains(a -> {
 			boolean result1 = Objects.requireNonNullElse(a.getName(), Text.empty()).getString().contains(ref.itemName);
@@ -35,15 +40,17 @@ public class ThrowItemCommand extends AbstractChatCommand {
 			var inv = context.rob().getInventory();
 			int slot = inv.getSlotWithStack(result.get());
 			var player = context.rob();
-			if (slot >= 9) {
+			LOG.info(slot);
+			if (slot >= 9 && slot < 36) {
 				InventoryScreen inventoryScreen = new InventoryScreen(player);
-				MinecraftClient.getInstance().setScreenAndRender(inventoryScreen);
+				MinecraftClient.getInstance().setScreen(inventoryScreen);
 				if (MinecraftClient.getInstance().interactionManager != null) {
 					MinecraftClient.getInstance().interactionManager.clickSlot(
 							inventoryScreen.getScreenHandler().syncId, slot, 1, SlotActionType.THROW, player);
 				}
-				MinecraftClient.getInstance().setScreenAndRender(null);
-			} else {
+				MinecraftClient.getInstance().setScreen(null);
+			}
+			if (slot > -1) {
 				inv.setSelectedSlot(slot);
 				context.handler().sendPacket(new UpdateSelectedSlotC2SPacket(inv.selectedSlot));
 				player.dropSelectedItem(true);

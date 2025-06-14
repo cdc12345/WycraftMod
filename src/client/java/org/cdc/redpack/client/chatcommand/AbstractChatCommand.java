@@ -18,6 +18,7 @@ public abstract class AbstractChatCommand {
 		this.commandParent = commandParent;
 		this.onlyOwner = true;
 		alias = new ArrayList<>();
+		addAlias(commandParent);
 	}
 
 	protected void setOnlyOwner(boolean onlyOwner) {

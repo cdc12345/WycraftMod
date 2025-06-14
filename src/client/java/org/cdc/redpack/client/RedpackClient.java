@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import org.cdc.redpack.RedPackConfig;
+import org.cdc.redpack.Redpack;
 import org.cdc.redpack.client.chatcommand.*;
 import org.cdc.redpack.client.command.*;
 import org.cdc.redpack.utils.StringUtils;
@@ -36,9 +37,11 @@ public class RedpackClient implements ClientModInitializer {
 		loadDelayStatus();
 		initChatCommand();
 
-		ClientReceiveMessageEvents.CHAT.register((text, signedMessage, gameProfile, parameters, instant) -> {
-			checkChatCommand(text.getString());
-		});
+		if (Redpack.isDebug()) {
+			ClientReceiveMessageEvents.CHAT.register((text, signedMessage, gameProfile, parameters, instant) -> {
+				checkChatCommand(text.getString());
+			});
+		}
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
 			LOG.debug(text.toString());
 			List<String> list = new ArrayList<>();
@@ -50,7 +53,7 @@ public class RedpackClient implements ClientModInitializer {
 		});
 		ClientCommandRegistrationCallback.EVENT.register((commandDispatcher, commandRegistryAccess) -> {
 			commandDispatcher.register(AutoHBCommand.INSTANCE.buildCommand());
-			commandDispatcher.register(TPAutoCommand.INSTANCE.buildCommand());
+			commandDispatcher.register(TPAutoCommand.getInstance().buildCommand());
 			commandDispatcher.register(ChownCommand.INSTANCE.buildCommand());
 			commandDispatcher.register(LoadConfigCommand.getInstance().buildCommand());
 			commandDispatcher.register(DropWycraftCoinCommand.getInstance().buildCommand());
@@ -84,12 +87,15 @@ public class RedpackClient implements ClientModInitializer {
 						if (RedPackConfig.INSTANCE.enableHB) {
 							if (clickEvent.getValue().startsWith("/luochuanredpacket get")) {
 								if (RedPackConfig.INSTANCE.maybeFail) {
-									if (Math.random() * 100 > RedPackConfig.INSTANCE.probability) {
+									double per = Math.random() * 100;
+									if (per > RedPackConfig.INSTANCE.probability) {
+										delayCommand();
+										LOG.info("哎哟，没抢到，数字为 {}", per);
 										continue;
 									}
 								}
 								//伪装成人来抢红包（
-								CompletableFuture.delayedExecutor(1000, TimeUnit.MILLISECONDS).execute(() -> {
+								CompletableFuture.delayedExecutor(500, TimeUnit.MILLISECONDS).execute(() -> {
 									handler.sendCommand(clickEvent.getValue().substring(1));
 								});
 								delayCommand();
@@ -141,8 +147,7 @@ public class RedpackClient implements ClientModInitializer {
 
 		if (MinecraftClient.getInstance().player != null) {
 			String myName = MinecraftClient.getInstance().player.getName().getString();
-			LOG.info(sender);
-			LOG.info(myName);
+			LOG.debug(sender);
 			var handler = MinecraftClient.getInstance().player.networkHandler;
 			if (handler != null) {
 				//检查延迟，防止一次性执行太多命令导致客户端或者服务器出现问题（发送了太多消息错误）
