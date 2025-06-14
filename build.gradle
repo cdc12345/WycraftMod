@@ -33,6 +33,10 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
+    maven {
+        name '3arthMaven'
+        url 'https://3arthqu4ke.github.io/maven'
+    }
 }
 
 dependencies {
@@ -42,6 +46,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    compileOnly 'me.earth.headlessmc:headlessmc-api:2.1.0'
 }
 
 processResources {

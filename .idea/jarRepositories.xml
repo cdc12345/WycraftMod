@@ -46,5 +46,10 @@
       <option name="name" value="LoomGlobalMinecraft" />
       <option name="url" value="file:/E:/gradle/caches/fabric-loom/minecraftMaven/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="3arthMaven" />
+      <option name="name" value="3arthMaven" />
+      <option name="url" value="https://3arthqu4ke.github.io/maven" />
+    </remote-repository>
   </component>
 </project>

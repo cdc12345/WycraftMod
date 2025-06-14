@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class RedPackConfig {
 
@@ -26,7 +27,7 @@ public class RedPackConfig {
 		config = Redpack.getConfigPath().resolve("wycraft.json");
 	}
 
-	private static Gson gson;
+	private static final Gson gson;
 
 	public static RedPackConfig INSTANCE;
 
@@ -38,7 +39,8 @@ public class RedPackConfig {
 	public static void saveConfig() {
 		LOG.debug("save the config");
 		try {
-			Files.copy(new ByteArrayInputStream(gson.toJson(INSTANCE).getBytes(StandardCharsets.UTF_8)), config);
+			Files.copy(new ByteArrayInputStream(gson.toJson(INSTANCE).getBytes(StandardCharsets.UTF_8)), config,
+					StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
