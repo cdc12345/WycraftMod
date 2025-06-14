@@ -79,6 +79,11 @@ public class RedpackClient implements ClientModInitializer {
 						LOG.debug("handler!=null");
 						if (RedPackConfig.INSTANCE.enableHB && clickEvent.getValue()
 								.startsWith("/luochuanredpacket get")) {
+							if (RedPackConfig.INSTANCE.maybeFail) {
+								if (Math.random() * 100 > RedPackConfig.INSTANCE.probability) {
+									continue;
+								}
+							}
 							handler.sendCommand(clickEvent.getValue().substring(1));
 							delayCommand();
 						}

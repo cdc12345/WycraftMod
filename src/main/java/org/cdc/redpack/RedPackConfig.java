@@ -35,6 +35,9 @@ public class RedPackConfig {
 	@Expose public TPPolicy autoTpaPolicy = TPPolicy.DENY;
 	@Expose public String owner = "";
 	@Expose(serialize = false) public boolean openToPublic = false;
+	//此参数用来伪装抢红包的失败可能
+	@Expose public boolean maybeFail = true;
+	@Expose public int probability = 40;
 
 	public static void saveConfig() {
 		LOG.debug("save the config");
