@@ -5,32 +5,46 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import org.cdc.redpack.RedPackConfig;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 public abstract class AbstractChatCommand {
 	protected String commandParent;
 	protected boolean onlyOwner;
+	protected List<String> alias;
 
 	protected AbstractChatCommand(String commandParent) {
 		this.commandParent = commandParent;
 		this.onlyOwner = true;
+		alias = new ArrayList<>();
 	}
 
 	protected void setOnlyOwner(boolean onlyOwner) {
 		this.onlyOwner = onlyOwner;
 	}
 
+	protected void addAlias(String alia) {
+		this.alias.add(alia);
+	}
+
 	public boolean permit(ChatCommandContext context) {
 		if (onlyOwner) {
 			//需要发送者为主人
-			return context.owner.equals(context.sender) || RedPackConfig.INSTANCE.openToPublic;
+			return context.owner.equals(context.sender) || RedPackConfig.INSTANCE.openToPublic || System.getProperty(
+					"red.debug", "false").equals("true");
 		} else {
 			return true;
 		}
 	}
 
 	public ExecuteResult execute(ChatCommandContext context) {
-		var combine = getPrefix(context) + commandParent;
-		if (context.message.startsWith(combine)) {
-			String args = context.message.replaceFirst(combine, "");
+		AtomicReference<String> combine = new AtomicReference<>();
+		if (alias.stream().anyMatch(a -> {
+			combine.set(getPrefix(context) + a);
+			return context.message.startsWith(combine.get());
+		})) {
+			String args = context.message.replaceFirst(combine.get(), "");
 			return execute0(context, args.isEmpty() ? new String[0] : args.split(" "));
 		}
 		//服务器上行有限，就算执行不了，我也不想做什么反馈，日后再说。。。

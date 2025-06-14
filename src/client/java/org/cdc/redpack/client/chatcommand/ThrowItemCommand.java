@@ -21,6 +21,8 @@ public class ThrowItemCommand extends AbstractChatCommand {
 		};
 		if (args.length == 0) {
 			ref.itemName = "币";
+		} else {
+			ref.itemName = args[0];
 		}
 		AtomicReference<ItemStack> result = new AtomicReference<>();
 		while (context.rob().getInventory().contains(a -> {

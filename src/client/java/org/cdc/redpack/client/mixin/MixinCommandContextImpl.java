@@ -5,6 +5,7 @@ import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandContextImpl;
 import org.cdc.redpack.client.command.HeadlessMCWhoAmICommand;
 import org.cdc.redpack.client.command.LoadConfigCommand;
+import org.cdc.redpack.client.command.TPAutoCommand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 	@Inject(method = "<init>", at = @At("RETURN")) private void initHook(HeadlessMc ctx, CallbackInfo ci) {
 		add(new HeadlessMCWhoAmICommand(ctx));
 		add(new LoadConfigCommand.SubCommand(ctx));
+		add(new TPAutoCommand.SubCommand(ctx));
 	}
 
 }

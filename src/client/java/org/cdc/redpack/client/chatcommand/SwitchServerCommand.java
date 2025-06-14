@@ -8,6 +8,7 @@ public class SwitchServerCommand extends AbstractChatCommand {
 
 	public SwitchServerCommand() {
 		super("请来服务器");
+		addAlias("来服务器");
 	}
 
 	@Override public ExecuteResult execute0(ChatCommandContext context, String[] args) {

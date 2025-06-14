@@ -50,6 +50,7 @@ public class RedPackConfig {
 	}
 
 	public static void loadConfig() throws IOException {
+		LOG.info("Load the config");
 		INSTANCE = gson.fromJson(Files.readString(config), RedPackConfig.class);
 	}
 
