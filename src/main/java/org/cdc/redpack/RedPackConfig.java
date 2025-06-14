@@ -37,7 +37,7 @@ public class RedPackConfig {
 	@Expose(serialize = false) public boolean openToPublic = false;
 	//此参数用来伪装抢红包的失败可能
 	@Expose public boolean maybeFail = true;
-	@Expose public int probability = 40;
+	@Expose public int probability = 20;
 
 	public static void saveConfig() {
 		LOG.debug("save the config");

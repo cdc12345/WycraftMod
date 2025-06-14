@@ -5,8 +5,8 @@ import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
 import net.minecraft.client.MinecraftClient;
 
-public class WhoAmICommand extends AbstractCommand {
-	public WhoAmICommand(HeadlessMc ctx) {
+public class HeadlessMCWhoAmICommand extends AbstractCommand {
+	public HeadlessMCWhoAmICommand(HeadlessMc ctx) {
 		super(ctx, "whoami", "print my name");
 	}
 

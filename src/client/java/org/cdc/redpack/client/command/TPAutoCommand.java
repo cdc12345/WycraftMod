@@ -22,11 +22,11 @@ public enum TPAutoCommand implements CommandBuilder {
 		}));
 	}
 
-	public TPPolicy getTPPolicy() {
+	private TPPolicy getTPPolicy() {
 		return RedPackConfig.INSTANCE.autoTpaPolicy;
 	}
 
-	public void setTPPolicy(TPPolicy tpPolicy) {
+	private void setTPPolicy(TPPolicy tpPolicy) {
 		RedPackConfig.INSTANCE.autoTpaPolicy = tpPolicy;
 		RedPackConfig.saveConfig();
 	}

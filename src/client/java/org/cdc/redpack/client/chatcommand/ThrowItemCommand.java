@@ -20,7 +20,9 @@ public class ThrowItemCommand extends AbstractChatCommand {
 			}
 			return result1;
 		})) {
-			context.rob().dropItem(result.get(), false);
+			var inv = context.rob().getInventory();
+			inv.setSelectedSlot(inv.getSlotWithStack(result.get()));
+			inv.dropSelectedItem(true);
 		}
 		return ExecuteResult.SUCCESS;
 	}

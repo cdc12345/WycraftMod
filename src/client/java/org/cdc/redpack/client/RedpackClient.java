@@ -8,9 +8,7 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import org.cdc.redpack.RedPackConfig;
 import org.cdc.redpack.client.chatcommand.*;
-import org.cdc.redpack.client.command.AutoHBCommand;
-import org.cdc.redpack.client.command.ChownCommand;
-import org.cdc.redpack.client.command.TPAutoCommand;
+import org.cdc.redpack.client.command.*;
 import org.cdc.redpack.utils.StringUtils;
 import org.cdc.redpack.utils.TPPolicy;
 import org.slf4j.Logger;
@@ -51,6 +49,8 @@ public class RedpackClient implements ClientModInitializer {
 			commandDispatcher.register(AutoHBCommand.INSTANCE.buildCommand());
 			commandDispatcher.register(TPAutoCommand.INSTANCE.buildCommand());
 			commandDispatcher.register(ChownCommand.INSTANCE.buildCommand());
+			commandDispatcher.register(LoadConfigCommand.getInstance().buildCommand());
+			commandDispatcher.register(DropWycraftCoinCommand.getInstance().buildCommand());
 		});
 
 	}
@@ -78,19 +78,20 @@ public class RedpackClient implements ClientModInitializer {
 						if (delay) {
 							continue;
 						}
-						LOG.debug("handler!=null");
-						if (RedPackConfig.INSTANCE.enableHB && clickEvent.getValue()
-								.startsWith("/luochuanredpacket get")) {
+						if (RedPackConfig.INSTANCE.enableHB) {
 							if (RedPackConfig.INSTANCE.maybeFail) {
 								if (Math.random() * 100 > RedPackConfig.INSTANCE.probability) {
 									continue;
 								}
 							}
-							//伪装成人来抢红包（
-							CompletableFuture.delayedExecutor(100, TimeUnit.MILLISECONDS).execute(() -> {
-								handler.sendCommand(clickEvent.getValue().substring(1));
-							});
-							delayCommand();
+							if (clickEvent.getValue().startsWith("/luochuanredpacket get")) {
+								//伪装成人来抢红包（
+								CompletableFuture.delayedExecutor(1000, TimeUnit.MILLISECONDS).execute(() -> {
+									handler.sendCommand(clickEvent.getValue().substring(1));
+								});
+								delayCommand();
+							}
+							//TODO 口令红包实现，无限期延期
 						}
 
 						//tpa自动处理
