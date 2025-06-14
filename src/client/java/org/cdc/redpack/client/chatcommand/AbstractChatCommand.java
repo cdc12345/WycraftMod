@@ -1,7 +1,7 @@
 package org.cdc.redpack.client.chatcommand;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import org.cdc.redpack.RedPackConfig;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,6 @@ public abstract class AbstractChatCommand {
 	}
 
 	public boolean permit(ChatCommandContext context) {
-		var combine = getPrefix(context) + commandParent;
 		if (onlyOwner) {
 			//需要发送者为主人
 			return context.owner.equals(context.sender) || RedPackConfig.INSTANCE.openToPublic;
@@ -32,7 +31,7 @@ public abstract class AbstractChatCommand {
 		var combine = getPrefix(context) + commandParent;
 		if (context.message.startsWith(combine)) {
 			String args = context.message.replaceFirst(combine, "");
-			return execute0(context, args.split(" "));
+			return execute0(context, args.isEmpty() ? new String[0] : args.split(" "));
 		}
 		//服务器上行有限，就算执行不了，我也不想做什么反馈，日后再说。。。
 		return ExecuteResult.FAIL;
@@ -42,10 +41,14 @@ public abstract class AbstractChatCommand {
 		return "@" + context.rob.getName().getString() + " ";
 	}
 
+	public String getCommandParent() {
+		return commandParent;
+	}
+
 	public abstract ExecuteResult execute0(ChatCommandContext context, String[] args);
 
 	public record ChatCommandContext(@NotNull String sender, @NotNull String message, @NotNull String owner,
-									 @NotNull PlayerEntity rob, ClientPlayNetworkHandler handler) {}
+									 @NotNull ClientPlayerEntity rob, ClientPlayNetworkHandler handler) {}
 
 	public enum ExecuteResult {
 		SUCCESS, FAIL

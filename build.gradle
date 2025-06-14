@@ -110,5 +110,5 @@ publishing {
 }
 
 runClient {
-    args("-Dred.debug=true")
+    jvmArgs("-Dred.debug=true")
 }

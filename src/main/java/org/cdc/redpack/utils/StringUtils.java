@@ -28,7 +28,7 @@ public class StringUtils {
 
 	public static boolean isMessage(String origin) {
 		if (System.getProperty("red.debug", "false").equals("true")) {
-			return true;
+			return origin.contains("> ");
 		}
 		return origin.contains(">> ") && origin.startsWith("[");
 	}

@@ -36,6 +36,9 @@ public class RedpackClient implements ClientModInitializer {
 		loadDelayStatus();
 		initChatCommand();
 
+		ClientReceiveMessageEvents.CHAT.register((text, signedMessage, gameProfile, parameters, instant) -> {
+			checkChatCommand(text.getString());
+		});
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
 			LOG.debug(text.toString());
 			List<String> list = new ArrayList<>();
@@ -79,12 +82,12 @@ public class RedpackClient implements ClientModInitializer {
 							continue;
 						}
 						if (RedPackConfig.INSTANCE.enableHB) {
-							if (RedPackConfig.INSTANCE.maybeFail) {
-								if (Math.random() * 100 > RedPackConfig.INSTANCE.probability) {
-									continue;
-								}
-							}
 							if (clickEvent.getValue().startsWith("/luochuanredpacket get")) {
+								if (RedPackConfig.INSTANCE.maybeFail) {
+									if (Math.random() * 100 > RedPackConfig.INSTANCE.probability) {
+										continue;
+									}
+								}
 								//伪装成人来抢红包（
 								CompletableFuture.delayedExecutor(1000, TimeUnit.MILLISECONDS).execute(() -> {
 									handler.sendCommand(clickEvent.getValue().substring(1));
@@ -152,6 +155,7 @@ public class RedpackClient implements ClientModInitializer {
 							RedPackConfig.INSTANCE.owner, MinecraftClient.getInstance().player, handler);
 					if (a.permit(context)) {
 						if (a.execute(context) == AbstractChatCommand.ExecuteResult.SUCCESS) {
+							LOG.info(a.getCommandParent());
 							delayCommand();
 						}
 					}

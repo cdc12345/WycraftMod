@@ -2,6 +2,7 @@
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/src/client/java/org/cdc/redpack/client/RedpackClient.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/org/cdc/redpack/RedPackConfig.java" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

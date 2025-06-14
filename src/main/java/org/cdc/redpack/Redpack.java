@@ -17,6 +17,7 @@ public class Redpack implements ModInitializer {
 
 	@Override public void onInitialize() {
 		LOG.info("config directory: {}", configPath);
+		LOG.info("Debug: {}", System.getProperty("red.debug", "false"));
 		if (!Files.exists(configPath)) {
 			try {
 				Files.createDirectory(configPath);

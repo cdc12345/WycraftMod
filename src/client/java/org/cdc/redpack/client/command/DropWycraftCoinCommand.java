@@ -1,12 +1,19 @@
 package org.cdc.redpack.client.command;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,22 +32,52 @@ public class DropWycraftCoinCommand implements CommandBuilder {
 
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("dropcoin").executes(a -> {
-			AtomicReference<ItemStack> result = new AtomicReference<>();
-			if (a.getSource().getPlayer().getInventory().contains(b -> {
-				boolean result1 = Objects.requireNonNullElse(b.getCustomName(), Text.empty())
-						.contains(Text.literal("币"));
-				if (result1) {
-					result.set(b);
-				}
-				return result1;
-			})) {
-				var inv = a.getSource().getPlayer().getInventory();
-				inv.setSelectedSlot(inv.getSlotWithStack(result.get()));
-				inv.dropSelectedItem(true);
-			} else {
-				a.getSource().sendFeedback(Text.literal("无物语币"));
-			}
+			Integer x = getInteger(a, "币");
+			if (x != null)
+				return x;
 			return 0;
-		});
+		}).then(ClientCommandManager.argument("keyword", StringArgumentType.string()).executes(a -> {
+			Integer x = getInteger(a, StringArgumentType.getString(a, "keyword"));
+			if (x != null)
+				return x;
+			return 0;
+		}));
+	}
+
+	private static @Nullable Integer getInteger(CommandContext<FabricClientCommandSource> a, final String keyWord) {
+		if (a.getSource().getPlayer().isCreative()) {
+			a.getSource().sendFeedback(Text.literal("创造不被允许使用"));
+			//ignore the usage of creativeMode
+			return 0;
+		}
+		AtomicReference<ItemStack> result = new AtomicReference<>();
+		while (a.getSource().getPlayer().getInventory().contains(b -> {
+			boolean result1 = Objects.requireNonNullElse(b.getName(), Text.empty()).getString().contains(keyWord);
+			if (result1) {
+				result.set(b);
+			}
+			return result1;
+		})) {
+			var inv = a.getSource().getPlayer().getInventory();
+			int slot = inv.getSlotWithStack(result.get());
+			var player = MinecraftClient.getInstance().player;
+			if (player != null) {
+				LOG.info("slot:{}", slot);
+				if (slot >= 9) {
+					InventoryScreen inventoryScreen = new InventoryScreen(player);
+					MinecraftClient.getInstance().setScreenAndRender(inventoryScreen);
+					if (MinecraftClient.getInstance().interactionManager != null) {
+						MinecraftClient.getInstance().interactionManager.clickSlot(
+								inventoryScreen.getScreenHandler().syncId, slot, 1, SlotActionType.THROW, player);
+					}
+					MinecraftClient.getInstance().setScreenAndRender(null);
+				} else {
+					inv.setSelectedSlot(slot);
+					player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(inv.selectedSlot));
+					MinecraftClient.getInstance().player.dropSelectedItem(true);
+				}
+			}
+		}
+		return null;
 	}
 }
