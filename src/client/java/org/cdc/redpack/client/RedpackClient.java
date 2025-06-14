@@ -39,6 +39,7 @@ public class RedpackClient implements ClientModInitializer {
 		initChatCommand();
 
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
+			LOG.debug(text.toString());
 			List<String> list = new ArrayList<>();
 			forEachSib(text, list);
 			if (!list.isEmpty()) {
@@ -60,6 +61,7 @@ public class RedpackClient implements ClientModInitializer {
 		chatCommands.add(new TPPolicyChangeCommand());
 		chatCommands.add(new GiveMeMoneyCommand());
 		chatCommands.add(new SwitchServerCommand());
+		chatCommands.add(new ThrowItemCommand());
 	}
 
 	private void forEachSib(Text text, List<String> stringBuilder) {
@@ -84,7 +86,10 @@ public class RedpackClient implements ClientModInitializer {
 									continue;
 								}
 							}
-							handler.sendCommand(clickEvent.getValue().substring(1));
+							//伪装成人来抢红包（
+							CompletableFuture.delayedExecutor(100, TimeUnit.MILLISECONDS).execute(() -> {
+								handler.sendCommand(clickEvent.getValue().substring(1));
+							});
 							delayCommand();
 						}
 
@@ -121,6 +126,7 @@ public class RedpackClient implements ClientModInitializer {
 
 	private void checkChatCommand(String game) {
 		if (RedPackConfig.INSTANCE.owner.isEmpty() || !StringUtils.isMessage(game)) {
+			LOG.debug("Hey, That is not a regular message");
 			return;
 		}
 		String sender = StringUtils.getSender(game);

@@ -108,3 +108,7 @@ publishing {
         // retrieving dependencies.
     }
 }
+
+runClient {
+    args("-Dred.debug=true")
+}
