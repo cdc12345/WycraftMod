@@ -53,8 +53,12 @@ public class FuckHBCommand implements CommandBuilder {
 		}
 
 		@Override public void execute(String s, String... strings) throws CommandException {
-			if (MinecraftClient.getInstance().player != null) {
-				MinecraftClient.getInstance().player.networkHandler.sendCommand(getInstance().lastHBCommand);
+			if (INSTANCE.getLastHBCommand() != null) {
+				if (MinecraftClient.getInstance().player != null) {
+					MinecraftClient.getInstance().player.networkHandler.sendCommand(INSTANCE.getLastHBCommand());
+				}
+			} else {
+				ctx.log("还没红包可以抢");
 			}
 		}
 	}

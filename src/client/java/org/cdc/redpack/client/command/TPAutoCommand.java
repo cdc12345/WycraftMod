@@ -47,11 +47,16 @@ public class TPAutoCommand implements CommandBuilder {
 	public static class SubCommand extends AbstractCommand {
 
 		public SubCommand(HeadlessMc ctx) {
-			super(ctx, "tpauto", "change Tp policy");
+			super(ctx, "tpauto", "Change pp policy");
 		}
 
 		@Override public void execute(String s, String... strings) throws CommandException {
-			getInstance().setTPPolicy(TPPolicy.valueOf(strings[0].toUpperCase()));
+			if (strings.length == 2) {
+				getInstance().setTPPolicy(TPPolicy.valueOf(strings[0].toUpperCase()));
+				ctx.log("TPPolicy: " + INSTANCE.getTPPolicy().name());
+			} else {
+				ctx.log(INSTANCE.getTPPolicy().name());
+			}
 		}
 	}
 }

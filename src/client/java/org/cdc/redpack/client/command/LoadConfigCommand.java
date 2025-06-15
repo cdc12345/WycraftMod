@@ -40,6 +40,7 @@ public class LoadConfigCommand implements CommandBuilder {
 		@Override public void execute(String s, String... strings) throws CommandException {
 			try {
 				RedPackConfig.loadConfig();
+				ctx.log("Loading the config");
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

@@ -45,17 +45,22 @@ public enum ChownCommand implements CommandBuilder {
 		}
 
 		@Override public void execute(String s, String... strings) throws CommandException {
-			if (strings.length == 1) {
-				INSTANCE.setOwner(strings[0]);
-				ctx.log(strings[0]);
+			if (strings.length == 2) {
+				INSTANCE.setOwner(strings[1]);
+				ctx.log(strings[1]);
+			} else {
+				ctx.log(INSTANCE.getOwner());
 			}
 		}
 
 		@Override public void getCompletions(String line, List<Map.Entry<String, String>> completions, String... args) {
-			if (args.length == 1) {
-				Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerList().forEach(a -> {
-					completions.add(Map.entry(Objects.requireNonNull(a.getProfile().getName()), "1230"));
-				});
+			if (line.startsWith(name)) {
+				if (args.length == 1) {
+					Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerList()
+							.forEach(a -> {
+								completions.add(Map.entry(a.getProfile().getName(), "1230"));
+							});
+				}
 			}
 		}
 	}
