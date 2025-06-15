@@ -55,10 +55,11 @@ public enum ChownCommand implements CommandBuilder {
 
 		@Override public void getCompletions(String line, List<Map.Entry<String, String>> completions, String... args) {
 			if (line.startsWith(name)) {
-				if (args.length == 1) {
+				if (args.length == 1 || args.length == 2) {
 					Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerList()
 							.forEach(a -> {
-								completions.add(Map.entry(a.getProfile().getName(), "1230"));
+								completions.add(Map.entry(a.getProfile().getName(),
+										Objects.requireNonNull(a.getDisplayName()).getString()));
 							});
 				}
 			}

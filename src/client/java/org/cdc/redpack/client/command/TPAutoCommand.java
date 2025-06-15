@@ -11,6 +11,9 @@ import org.cdc.redpack.RedPackConfig;
 import org.cdc.redpack.argument.TPPolicyArgumentType;
 import org.cdc.redpack.utils.TPPolicy;
 
+import java.util.List;
+import java.util.Map;
+
 public class TPAutoCommand implements CommandBuilder {
 	private static TPAutoCommand INSTANCE;
 
@@ -39,9 +42,18 @@ public class TPAutoCommand implements CommandBuilder {
 		return RedPackConfig.INSTANCE.autoTpaPolicy;
 	}
 
-	private void setTPPolicy(TPPolicy tpPolicy) {
-		RedPackConfig.INSTANCE.autoTpaPolicy = tpPolicy;
-		RedPackConfig.saveConfig();
+	private void setTPPolicy(String tpPolicy) {
+		if (tpPolicy != null) {
+			RedPackConfig.INSTANCE.autoTpaPolicy = TPPolicy.valueOf(tpPolicy.toUpperCase());
+			RedPackConfig.saveConfig();
+		}
+	}
+
+	private void setTPPolicy(TPPolicy tp) {
+		if (tp != null) {
+			RedPackConfig.INSTANCE.autoTpaPolicy = tp;
+			RedPackConfig.saveConfig();
+		}
 	}
 
 	public static class SubCommand extends AbstractCommand {
@@ -52,10 +64,20 @@ public class TPAutoCommand implements CommandBuilder {
 
 		@Override public void execute(String s, String... strings) throws CommandException {
 			if (strings.length == 2) {
-				getInstance().setTPPolicy(TPPolicy.valueOf(strings[0].toUpperCase()));
+				getInstance().setTPPolicy(strings[1]);
 				ctx.log("TPPolicy: " + INSTANCE.getTPPolicy().name());
 			} else {
 				ctx.log(INSTANCE.getTPPolicy().name());
+			}
+		}
+
+		@Override public void getCompletions(String line, List<Map.Entry<String, String>> completions, String... args) {
+			if (line.startsWith(name)) {
+				if (args.length == 1 || args.length == 2) {
+					for (TPPolicy value : TPPolicy.values()) {
+						completions.add(Map.entry(value.name(), value.hashCode() + ""));
+					}
+				}
 			}
 		}
 	}
