@@ -7,6 +7,7 @@ import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,8 +26,12 @@ public class FuckHBCommand implements CommandBuilder {
 
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("fuckhb").executes(a -> {
-			if (MinecraftClient.getInstance().player != null) {
-				MinecraftClient.getInstance().player.networkHandler.sendCommand(lastHBCommand);
+			if (lastHBCommand != null) {
+				if (MinecraftClient.getInstance().player != null) {
+					MinecraftClient.getInstance().player.networkHandler.sendCommand(lastHBCommand);
+				}
+			} else {
+				a.getSource().sendError(Text.literal("还没红包可以抢"));
 			}
 			return 0;
 		});
