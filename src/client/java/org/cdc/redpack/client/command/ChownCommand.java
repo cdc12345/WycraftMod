@@ -2,10 +2,18 @@ package org.cdc.redpack.client.command;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.AbstractCommand;
+import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.cdc.redpack.RedPackConfig;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public enum ChownCommand implements CommandBuilder {
 	INSTANCE;
@@ -28,5 +36,27 @@ public enum ChownCommand implements CommandBuilder {
 
 	private String getOwner() {
 		return RedPackConfig.INSTANCE.owner;
+	}
+
+	public static class SubCommand extends AbstractCommand {
+
+		public SubCommand(HeadlessMc ctx) {
+			super(ctx, "chown", "Change the owner of robot");
+		}
+
+		@Override public void execute(String s, String... strings) throws CommandException {
+			if (strings.length == 1) {
+				INSTANCE.setOwner(strings[0]);
+				ctx.log(strings[0]);
+			}
+		}
+
+		@Override public void getCompletions(String line, List<Map.Entry<String, String>> completions, String... args) {
+			if (args.length == 1) {
+				Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerList().forEach(a -> {
+					completions.add(Map.entry(Objects.requireNonNull(a.getDisplayName()).getString(), "1230"));
+				});
+			}
+		}
 	}
 }

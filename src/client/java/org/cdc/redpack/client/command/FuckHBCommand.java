@@ -1,6 +1,9 @@
 package org.cdc.redpack.client.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.AbstractCommand;
+import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -36,5 +39,18 @@ public class FuckHBCommand implements CommandBuilder {
 	public void setLastHBCommand(String lastHBCommand) {
 		LOGGER.info("抢红包{}", lastHBCommand);
 		this.lastHBCommand = lastHBCommand;
+	}
+
+	public static class SubCommand extends AbstractCommand {
+
+		public SubCommand(HeadlessMc ctx) {
+			super(ctx, "fuckhb", "Fuck the HB");
+		}
+
+		@Override public void execute(String s, String... strings) throws CommandException {
+			if (MinecraftClient.getInstance().player != null) {
+				MinecraftClient.getInstance().player.networkHandler.sendCommand(getInstance().lastHBCommand);
+			}
+		}
 	}
 }
