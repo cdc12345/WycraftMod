@@ -57,6 +57,7 @@ public class RedpackClient implements ClientModInitializer {
 			commandDispatcher.register(ChownCommand.INSTANCE.buildCommand());
 			commandDispatcher.register(LoadConfigCommand.getInstance().buildCommand());
 			commandDispatcher.register(DropWycraftCoinCommand.getInstance().buildCommand());
+			commandDispatcher.register(FuckHBCommand.getInstance().buildCommand());
 		});
 
 	}
@@ -75,8 +76,6 @@ public class RedpackClient implements ClientModInitializer {
 			var hoverEvent = text1.getStyle().getHoverEvent();
 			var clickEvent = text1.getStyle().getClickEvent();
 			if (clickEvent != null) {
-				stringBuilder.add(
-						text1.getString() + ":" + clickEvent.getAction().name() + ":" + clickEvent.getValue());
 				if (MinecraftClient.getInstance().player != null) {
 					var handler = MinecraftClient.getInstance().player.networkHandler;
 					if (handler != null) {
@@ -84,11 +83,12 @@ public class RedpackClient implements ClientModInitializer {
 						if (delay) {
 							continue;
 						}
-						if (RedPackConfig.INSTANCE.enableHB) {
-							if (clickEvent.getValue().startsWith("/luochuanredpacket get")) {
+						if (clickEvent.getValue().startsWith("/luochuanredpacket get")) {
+							String command = clickEvent.getValue().substring(1);
+							if (RedPackConfig.INSTANCE.enableHB) {
 								if (RedPackConfig.INSTANCE.maybeFail) {
 									double per = Math.random() * 100;
-									if (per > RedPackConfig.INSTANCE.probability) {
+									if (per > RedPackConfig.INSTANCE.probability || text.getString().contains("1 ¥")) {
 										delayCommand();
 										LOG.info("哎哟，没抢到，数字为 {}", per);
 										continue;
@@ -96,12 +96,13 @@ public class RedpackClient implements ClientModInitializer {
 								}
 								//伪装成人来抢红包（
 								CompletableFuture.delayedExecutor(500, TimeUnit.MILLISECONDS).execute(() -> {
-									handler.sendCommand(clickEvent.getValue().substring(1));
+									handler.sendCommand(command);
 								});
 								delayCommand();
 							}
-							//TODO 口令红包实现，无限期延期
+							FuckHBCommand.getInstance().setLastHBCommand(command);
 						}
+						//TODO 口令红包实现，无限期延期
 
 						//tpa自动处理
 						if (RedPackConfig.INSTANCE.autoTpaPolicy == TPPolicy.DENY) {
@@ -124,12 +125,12 @@ public class RedpackClient implements ClientModInitializer {
 						}
 					}
 				}
+				stringBuilder.add(
+						text1.getString() + ":" + clickEvent.getAction().name() + ":" + clickEvent.getValue());
 			}
 			if (hoverEvent != null) {
 				Text value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
-				stringBuilder.add(text1.getString() + ":" + hoverEvent.getAction() + ":" + (value != null ?
-						value.getString() :
-						null));
+				stringBuilder.add(text1.getString() + ":" + (value != null ? value.getString() : null));
 			}
 		}
 	}

@@ -53,7 +53,11 @@ public abstract class AbstractChatCommand {
 	}
 
 	protected String getPrefix(ChatCommandContext context) {
-		return "@" + context.rob.getName().getString() + " ";
+		if (RedPackConfig.INSTANCE.chatCommandPrefixFormat == null) {
+			return "@" + context.rob.getName().getString() + " ";
+		} else {
+			return String.format(RedPackConfig.INSTANCE.chatCommandPrefixFormat, context.rob.getName().getString());
+		}
 	}
 
 	public String getCommandParent() {

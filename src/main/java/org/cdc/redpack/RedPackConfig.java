@@ -38,7 +38,8 @@ public class RedPackConfig {
 	//此参数用来伪装抢红包的失败可能
 	@Expose public boolean maybeFail = true;
 	//抢红包的概率
-	@Expose public int probability = 20;
+	@Expose public int probability = 40;
+	@Expose public String chatCommandPrefixFormat = "@%s ";
 
 	public static void saveConfig() {
 		LOG.debug("save the config");
