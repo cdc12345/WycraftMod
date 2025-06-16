@@ -67,7 +67,7 @@ public abstract class AbstractChatCommand {
 	public abstract ExecuteResult execute0(ChatCommandContext context, String[] args);
 
 	public record ChatCommandContext(@NotNull String sender, @NotNull String message, @NotNull String owner,
-									 @NotNull ClientPlayerEntity rob, ClientPlayNetworkHandler handler) {}
+									 @NotNull ClientPlayerEntity rob, @NotNull ClientPlayNetworkHandler handler) {}
 
 	public enum ExecuteResult {
 		SUCCESS, FAIL

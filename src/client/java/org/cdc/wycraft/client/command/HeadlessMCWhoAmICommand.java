@@ -6,6 +6,7 @@ import me.earth.headlessmc.api.command.CommandException;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class HeadlessMCWhoAmICommand extends AbstractCommand {
 	public HeadlessMCWhoAmICommand(HeadlessMc ctx) {
@@ -17,7 +18,11 @@ public class HeadlessMCWhoAmICommand extends AbstractCommand {
 			ClientPlayerEntity clientPlayerEntity = MinecraftClient.getInstance().player;
 			BlockPos pos = clientPlayerEntity.getBlockPos();
 			ctx.log(clientPlayerEntity.getName().getString() + ":X: " + pos.getX() + ",Y: " + pos.getY() + ",Z:"
-					+ pos.getZ());
+					+ pos.getZ() + ",World: " + getWorldName(clientPlayerEntity.getWorld()));
 		}
+	}
+
+	private String getWorldName(World world) {
+		return world.getRegistryKey().getValue().getPath();
 	}
 }

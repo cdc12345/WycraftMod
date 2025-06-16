@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public enum ChownCommand implements CommandBuilder {
+public enum ChownCommand implements ICommandBuilder {
 	INSTANCE;
 
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {

@@ -8,6 +8,7 @@
   "contact": {},
   "license": "GPL-3.0",
   "environment": "client",
+  "accessWidener": "wycraft.accesswidener",
   "entrypoints": {
     "client": [
       "org.cdc.wycraft.client.WycraftClient"
@@ -17,9 +18,9 @@
     ]
   },
   "mixins": [
-    "redpack.mixins.json",
+    "wycraft.mixins.json",
     {
-      "config": "redpack.client.mixins.json",
+      "config": "wycraft.client.mixins.json",
       "environment": "client"
     }
   ],

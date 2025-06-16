@@ -14,7 +14,7 @@ import org.cdc.wycraft.utils.TPPolicy;
 import java.util.List;
 import java.util.Map;
 
-public class TPAutoCommand implements CommandBuilder {
+public class TPAutoCommand implements ICommandBuilder {
 	private static TPAutoCommand INSTANCE;
 
 	public static TPAutoCommand getInstance() {

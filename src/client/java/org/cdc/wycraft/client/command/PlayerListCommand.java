@@ -7,10 +7,13 @@ import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.PlayerListHud;
 import net.minecraft.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PlayerListCommand implements CommandBuilder {
+public class PlayerListCommand implements ICommandBuilder {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(PlayerListCommand.class);
 
 	private static PlayerListCommand INSTANCE;
 
@@ -33,23 +36,11 @@ public class PlayerListCommand implements CommandBuilder {
 	}
 
 	private Text getHeader() {
-		try {
-			var field = PlayerListHud.class.getDeclaredField("header");
-			var playerlist = MinecraftClient.getInstance().inGameHud.getPlayerListHud();
-			return (Text) field.get(playerlist);
-		} catch (NoSuchFieldException | IllegalAccessException ignored) {
-		}
-		return null;
+		return MinecraftClient.getInstance().inGameHud.getPlayerListHud().header;
 	}
 
 	private Text getFooter() {
-		try {
-			var field = PlayerListHud.class.getDeclaredField("footer");
-			var playerlist = MinecraftClient.getInstance().inGameHud.getPlayerListHud();
-			return (Text) field.get(playerlist);
-		} catch (NoSuchFieldException | IllegalAccessException ignored) {
-		}
-		return null;
+		return MinecraftClient.getInstance().inGameHud.getPlayerListHud().footer;
 	}
 
 	public static class SubCommand extends AbstractCommand {

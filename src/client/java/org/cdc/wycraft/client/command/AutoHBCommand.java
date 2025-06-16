@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import org.cdc.wycraft.WycraftConfig;
 
-public enum AutoHBCommand implements CommandBuilder {
+public enum AutoHBCommand implements ICommandBuilder {
 	INSTANCE;
 
 	public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {

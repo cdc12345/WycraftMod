@@ -10,7 +10,7 @@ import org.cdc.wycraft.WycraftConfig;
 
 import java.io.IOException;
 
-public class LoadConfigCommand implements CommandBuilder {
+public class LoadConfigCommand implements ICommandBuilder {
 
 	private static LoadConfigCommand INSTANCE;
 

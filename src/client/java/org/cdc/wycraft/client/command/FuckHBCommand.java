@@ -11,7 +11,7 @@ import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FuckHBCommand implements CommandBuilder {
+public class FuckHBCommand implements ICommandBuilder {
 	private static FuckHBCommand INSTANCE;
 
 	public static FuckHBCommand getInstance() {

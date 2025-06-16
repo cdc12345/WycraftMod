@@ -4,14 +4,17 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.chatcommand.*;
 import org.cdc.wycraft.client.command.*;
+import org.cdc.wycraft.client.visitor.AutoHBVisitor;
+import org.cdc.wycraft.client.visitor.IEventVisitor;
+import org.cdc.wycraft.client.visitor.TpAutoVisitor;
 import org.cdc.wycraft.utils.StringUtils;
-import org.cdc.wycraft.utils.TPPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +25,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -32,11 +36,16 @@ public class WycraftClient implements ClientModInitializer {
 	private boolean delay = false;
 
 	private final List<AbstractChatCommand> chatCommands = new ArrayList<>();
+	private final List<IEventVisitor> eventVisitors = new ArrayList<>();
+	public final int DELAY_TIME = 20;
 
 	@Override public void onInitializeClient() {
 		LOG.info("Starting");
 		loadDelayStatus();
-		initChatCommand();
+
+		initChatCommands();
+		initEventVisitors();
+		initClientCommands();
 
 		if (Wycraft.isDebug()) {
 			ClientReceiveMessageEvents.CHAT.register((text, signedMessage, gameProfile, parameters, instant) -> {
@@ -52,6 +61,9 @@ public class WycraftClient implements ClientModInitializer {
 			}
 			checkChatCommand(text.getString());
 		});
+	}
+
+	private void initClientCommands() {
 		ClientCommandRegistrationCallback.EVENT.register((commandDispatcher, commandRegistryAccess) -> {
 			commandDispatcher.register(AutoHBCommand.INSTANCE.buildCommand());
 			commandDispatcher.register(TPAutoCommand.getInstance().buildCommand());
@@ -61,10 +73,9 @@ public class WycraftClient implements ClientModInitializer {
 			commandDispatcher.register(FuckHBCommand.getInstance().buildCommand());
 			commandDispatcher.register(PlayerListCommand.getInstance().buildCommand());
 		});
-
 	}
 
-	private void initChatCommand() {
+	private void initChatCommands() {
 		chatCommands.add(new WhereAreYouCommand());
 		chatCommands.add(ThursdayCommand.getInstance());
 		chatCommands.add(new TPPolicyChangeCommand());
@@ -73,65 +84,36 @@ public class WycraftClient implements ClientModInitializer {
 		chatCommands.add(new ThrowItemCommand());
 	}
 
+	private void initEventVisitors() {
+		eventVisitors.add(new AutoHBVisitor());
+		eventVisitors.add(new TpAutoVisitor());
+	}
+
 	private void forEachSib(Text text, List<String> stringBuilder) {
 		for (Text text1 : text.getSiblings()) {
 			var hoverEvent = text1.getStyle().getHoverEvent();
 			var clickEvent = text1.getStyle().getClickEvent();
-			if (clickEvent != null) {
-				if (MinecraftClient.getInstance().player != null) {
-					var handler = MinecraftClient.getInstance().player.networkHandler;
-					if (handler != null) {
-						//检查延迟，防止一次性执行太多命令导致客户端或者服务器出现问题（发送了太多消息错误）
-						if (delay) {
-							continue;
-						}
-						if (clickEvent.getValue().startsWith("/luochuanredpacket get")) {
-							String command = clickEvent.getValue().substring(1);
-							if (WycraftConfig.INSTANCE.enableHB) {
-								if (WycraftConfig.INSTANCE.maybeFail) {
-									double per = Math.random() * 100;
-									if (per > WycraftConfig.INSTANCE.probability || text.getString().contains("1 ¥")) {
-										delayCommand();
-										LOG.info("哎哟，没抢到，数字为 {}", per);
-										continue;
-									}
-								}
-								//伪装成人来抢红包（
-								CompletableFuture.delayedExecutor(500, TimeUnit.MILLISECONDS).execute(() -> {
-									handler.sendCommand(command);
-								});
-								delayCommand();
-							}
-							//方便命令，fuckhb抢红包
-							FuckHBCommand.getInstance().setLastHBCommand(command);
-						}
-						//TODO 口令红包实现，无限期延期
-
-						//tpa自动处理
-						if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.DENY) {
-							if (clickEvent.getValue().startsWith("/cmi tpdeny")) {
-								handler.sendCommand(clickEvent.getValue().substring(1));
-								delayCommand();
-							}
-						} else {
-							if (clickEvent.getValue().startsWith("/cmi tpaccept")) {
-								String sender = StringUtils.getSender(text.getString());
-								LOG.info("{} 请求tp", sender);
-								if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.ALL) {
-									handler.sendCommand(clickEvent.getValue().substring(1));
-								} else if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.OWNER
-										&& WycraftConfig.INSTANCE.owner.equals(sender)) {
-									handler.sendCommand(clickEvent.getValue().substring(1));
-								}
-								delayCommand();
-							}
-						}
-					}
-				}
+			ClientPlayNetworkHandler handler;
+			if (MinecraftClient.getInstance().player != null) {
+				handler = MinecraftClient.getInstance().player.networkHandler;
+			} else {
+				handler = null;
+			}
+			if (clickEvent != null && !delay) {
+				eventVisitors.forEach(a -> {
+					a.visitClickEvent(clickEvent,
+							new IEventVisitor.EventContext(text, text1, Optional.ofNullable(handler),
+									this::delayCommand));
+				});
 				stringBuilder.add(
 						text1.getString() + ":" + clickEvent.getAction().name() + ":" + clickEvent.getValue());
 			}
-			if (hoverEvent != null) {
+			if (hoverEvent != null && !delay) {
+				eventVisitors.forEach(a -> {
+					a.visitHoverEvent(hoverEvent,
+							new IEventVisitor.EventContext(text, text1, Optional.ofNullable(handler),
+									this::delayCommand));
+				});
 				Text value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
 				stringBuilder.add(text1.getString() + ":" + (value != null ? value.getString() : null));
 			}
@@ -140,7 +122,6 @@ public class WycraftClient implements ClientModInitializer {
 
 	private void checkChatCommand(String game) {
 		if (WycraftConfig.INSTANCE.owner.isEmpty() || !StringUtils.isMessage(game)) {
-			LOG.debug("Hey, That is not a regular message");
 			return;
 		}
 		String sender = StringUtils.getSender(game);
@@ -183,12 +164,13 @@ public class WycraftClient implements ClientModInitializer {
 		}
 	}
 
-	private void delayCommand() {
+	private int delayCommand() {
 		delay = true;
-		final long DELAY_TIME = 20;
+
 		CompletableFuture.delayedExecutor(DELAY_TIME, TimeUnit.MILLISECONDS).execute(() -> {
 			delay = false;
 		});
+		return DELAY_TIME;
 	}
 
 	private void loadDelayStatus() {

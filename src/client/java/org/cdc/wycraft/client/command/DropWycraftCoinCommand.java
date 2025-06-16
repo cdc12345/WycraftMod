@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DropWycraftCoinCommand implements CommandBuilder {
+public class DropWycraftCoinCommand implements ICommandBuilder {
 
 	private static final Logger LOG = LogManager.getLogger(DropWycraftCoinCommand.class);
 
@@ -50,7 +50,6 @@ public class DropWycraftCoinCommand implements CommandBuilder {
 			//ignore the usage of creativeMode
 			return 0;
 		}
-		LOG.info(keyWord);
 		AtomicReference<ItemStack> result = new AtomicReference<>();
 		while (a.getSource().getPlayer().getInventory().contains(b -> {
 			boolean result1 = Objects.requireNonNullElse(b.getName(), Text.empty()).getString().contains(keyWord);
