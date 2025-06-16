@@ -1,8 +1,8 @@
-package org.cdc.redpack.argument;
+package org.cdc.wycraft.argument;
 
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.argument.EnumArgumentType;
-import org.cdc.redpack.utils.TPPolicy;
+import org.cdc.wycraft.utils.TPPolicy;
 
 public class TPPolicyArgumentType extends EnumArgumentType<TPPolicy> {
 

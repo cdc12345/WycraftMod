@@ -1,4 +1,4 @@
-package org.cdc.redpack.client.command;
+package org.cdc.wycraft.client.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import me.earth.headlessmc.api.HeadlessMc;
@@ -7,9 +7,9 @@ import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
-import org.cdc.redpack.RedPackConfig;
-import org.cdc.redpack.argument.TPPolicyArgumentType;
-import org.cdc.redpack.utils.TPPolicy;
+import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.argument.TPPolicyArgumentType;
+import org.cdc.wycraft.utils.TPPolicy;
 
 import java.util.List;
 import java.util.Map;
@@ -39,20 +39,20 @@ public class TPAutoCommand implements CommandBuilder {
 	}
 
 	private TPPolicy getTPPolicy() {
-		return RedPackConfig.INSTANCE.autoTpaPolicy;
+		return WycraftConfig.INSTANCE.autoTpaPolicy;
 	}
 
 	private void setTPPolicy(String tpPolicy) {
 		if (tpPolicy != null) {
-			RedPackConfig.INSTANCE.autoTpaPolicy = TPPolicy.valueOf(tpPolicy.toUpperCase());
-			RedPackConfig.saveConfig();
+			WycraftConfig.INSTANCE.autoTpaPolicy = TPPolicy.valueOf(tpPolicy.toUpperCase());
+			WycraftConfig.saveConfig();
 		}
 	}
 
 	private void setTPPolicy(TPPolicy tp) {
 		if (tp != null) {
-			RedPackConfig.INSTANCE.autoTpaPolicy = tp;
-			RedPackConfig.saveConfig();
+			WycraftConfig.INSTANCE.autoTpaPolicy = tp;
+			WycraftConfig.saveConfig();
 		}
 	}
 

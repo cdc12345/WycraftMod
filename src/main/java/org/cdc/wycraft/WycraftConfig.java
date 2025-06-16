@@ -1,10 +1,10 @@
-package org.cdc.redpack;
+package org.cdc.wycraft;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.cdc.redpack.utils.TPPolicy;
+import org.cdc.wycraft.utils.TPPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,21 +15,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-public class RedPackConfig {
+public class WycraftConfig {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RedPackConfig.class);
+	private static final Logger LOG = LoggerFactory.getLogger(WycraftConfig.class);
 
 	private static final Path config;
 
 	static {
-		INSTANCE = new RedPackConfig();
+		INSTANCE = new WycraftConfig();
 		gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().setPrettyPrinting().create();
-		config = Redpack.getConfigPath().resolve("wycraft.json");
+		config = Wycraft.getConfigPath().resolve("wycraft.json");
 	}
 
 	private static final Gson gson;
 
-	public static RedPackConfig INSTANCE;
+	public static WycraftConfig INSTANCE;
 
 	@Expose @SerializedName("autoHongBao") public boolean enableHB = false;
 	@Expose public TPPolicy autoTpaPolicy = TPPolicy.DENY;
@@ -53,7 +53,7 @@ public class RedPackConfig {
 
 	public static void loadConfig() throws IOException {
 		LOG.info("Load the config");
-		INSTANCE = gson.fromJson(Files.readString(config), RedPackConfig.class);
+		INSTANCE = gson.fromJson(Files.readString(config), WycraftConfig.class);
 	}
 
 	public static Path getConfig() {

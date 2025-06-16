@@ -1,4 +1,4 @@
-package org.cdc.redpack.client;
+package org.cdc.wycraft.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -6,27 +6,28 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
-import org.cdc.redpack.RedPackConfig;
-import org.cdc.redpack.Redpack;
-import org.cdc.redpack.client.chatcommand.*;
-import org.cdc.redpack.client.command.*;
-import org.cdc.redpack.utils.StringUtils;
-import org.cdc.redpack.utils.TPPolicy;
+import org.cdc.wycraft.Wycraft;
+import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.client.chatcommand.*;
+import org.cdc.wycraft.client.command.*;
+import org.cdc.wycraft.utils.StringUtils;
+import org.cdc.wycraft.utils.TPPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class RedpackClient implements ClientModInitializer {
+public class WycraftClient implements ClientModInitializer {
 
-	private final Logger LOG = LoggerFactory.getLogger(RedpackClient.class);
+	private final Logger LOG = LoggerFactory.getLogger(WycraftClient.class);
 
 	private boolean delay = false;
 
@@ -37,7 +38,7 @@ public class RedpackClient implements ClientModInitializer {
 		loadDelayStatus();
 		initChatCommand();
 
-		if (Redpack.isDebug()) {
+		if (Wycraft.isDebug()) {
 			ClientReceiveMessageEvents.CHAT.register((text, signedMessage, gameProfile, parameters, instant) -> {
 				checkChatCommand(text.getString());
 			});
@@ -58,6 +59,7 @@ public class RedpackClient implements ClientModInitializer {
 			commandDispatcher.register(LoadConfigCommand.getInstance().buildCommand());
 			commandDispatcher.register(DropWycraftCoinCommand.getInstance().buildCommand());
 			commandDispatcher.register(FuckHBCommand.getInstance().buildCommand());
+			commandDispatcher.register(PlayerListCommand.getInstance().buildCommand());
 		});
 
 	}
@@ -85,10 +87,10 @@ public class RedpackClient implements ClientModInitializer {
 						}
 						if (clickEvent.getValue().startsWith("/luochuanredpacket get")) {
 							String command = clickEvent.getValue().substring(1);
-							if (RedPackConfig.INSTANCE.enableHB) {
-								if (RedPackConfig.INSTANCE.maybeFail) {
+							if (WycraftConfig.INSTANCE.enableHB) {
+								if (WycraftConfig.INSTANCE.maybeFail) {
 									double per = Math.random() * 100;
-									if (per > RedPackConfig.INSTANCE.probability || text.getString().contains("1 ¥")) {
+									if (per > WycraftConfig.INSTANCE.probability || text.getString().contains("1 ¥")) {
 										delayCommand();
 										LOG.info("哎哟，没抢到，数字为 {}", per);
 										continue;
@@ -100,12 +102,13 @@ public class RedpackClient implements ClientModInitializer {
 								});
 								delayCommand();
 							}
+							//方便命令，fuckhb抢红包
 							FuckHBCommand.getInstance().setLastHBCommand(command);
 						}
 						//TODO 口令红包实现，无限期延期
 
 						//tpa自动处理
-						if (RedPackConfig.INSTANCE.autoTpaPolicy == TPPolicy.DENY) {
+						if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.DENY) {
 							if (clickEvent.getValue().startsWith("/cmi tpdeny")) {
 								handler.sendCommand(clickEvent.getValue().substring(1));
 								delayCommand();
@@ -114,10 +117,10 @@ public class RedpackClient implements ClientModInitializer {
 							if (clickEvent.getValue().startsWith("/cmi tpaccept")) {
 								String sender = StringUtils.getSender(text.getString());
 								LOG.info("{} 请求tp", sender);
-								if (RedPackConfig.INSTANCE.autoTpaPolicy == TPPolicy.ALL) {
+								if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.ALL) {
 									handler.sendCommand(clickEvent.getValue().substring(1));
-								} else if (RedPackConfig.INSTANCE.autoTpaPolicy == TPPolicy.OWNER
-										&& RedPackConfig.INSTANCE.owner.equals(sender)) {
+								} else if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.OWNER
+										&& WycraftConfig.INSTANCE.owner.equals(sender)) {
 									handler.sendCommand(clickEvent.getValue().substring(1));
 								}
 								delayCommand();
@@ -136,7 +139,7 @@ public class RedpackClient implements ClientModInitializer {
 	}
 
 	private void checkChatCommand(String game) {
-		if (RedPackConfig.INSTANCE.owner.isEmpty() || !StringUtils.isMessage(game)) {
+		if (WycraftConfig.INSTANCE.owner.isEmpty() || !StringUtils.isMessage(game)) {
 			LOG.debug("Hey, That is not a regular message");
 			return;
 		}
@@ -158,7 +161,7 @@ public class RedpackClient implements ClientModInitializer {
 
 				chatCommands.forEach(a -> {
 					var context = new AbstractChatCommand.ChatCommandContext(sender, message,
-							RedPackConfig.INSTANCE.owner, MinecraftClient.getInstance().player, handler);
+							WycraftConfig.INSTANCE.owner, MinecraftClient.getInstance().player, handler);
 					if (a.permit(context)) {
 						if (a.execute(context) == AbstractChatCommand.ExecuteResult.SUCCESS) {
 							LOG.info(a.getCommandParent());
@@ -167,13 +170,13 @@ public class RedpackClient implements ClientModInitializer {
 					}
 				});
 				var prefix = "@" + myName + " ";
-				if (!sender.equals(RedPackConfig.INSTANCE.owner) && !RedPackConfig.INSTANCE.openToPublic) {
+				if (!sender.equals(WycraftConfig.INSTANCE.owner) && !WycraftConfig.INSTANCE.openToPublic) {
 					return;
 				}
 				//这是个特殊的提权命令
 				var openCommand = prefix + "对公开放";
 				if (message.startsWith(openCommand)) {
-					RedPackConfig.INSTANCE.openToPublic = !RedPackConfig.INSTANCE.openToPublic;
+					WycraftConfig.INSTANCE.openToPublic = !WycraftConfig.INSTANCE.openToPublic;
 					delayCommand();
 				}
 			}
@@ -189,14 +192,14 @@ public class RedpackClient implements ClientModInitializer {
 	}
 
 	private void loadDelayStatus() {
-		Path lock = RedPackConfig.getConfig().resolve(".thursdaylock");
-		Calendar calendar = Calendar.getInstance();
-		if (Files.exists(lock) && calendar.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
+		Path lock = WycraftConfig.getConfig().resolve(".thursdaylock");
+		LocalDate localDate = LocalDate.now();
+		if (Files.exists(lock) && localDate.getDayOfWeek() == DayOfWeek.THURSDAY) {
 			ThursdayCommand.getInstance().setThursdayDelay(true);
 			CompletableFuture.delayedExecutor(1, TimeUnit.DAYS).execute(() -> {
 				ThursdayCommand.getInstance().setThursdayDelay(false);
 				try {
-					Files.delete(RedPackConfig.getConfig().resolve(".thursdaylock"));
+					Files.delete(WycraftConfig.getConfig().resolve(".thursdaylock"));
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

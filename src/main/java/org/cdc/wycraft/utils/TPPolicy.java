@@ -1,4 +1,4 @@
-package org.cdc.redpack.utils;
+package org.cdc.wycraft.utils;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.util.StringIdentifiable;

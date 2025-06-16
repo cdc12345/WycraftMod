@@ -1,4 +1,4 @@
-package org.cdc.redpack.client.command;
+package org.cdc.wycraft.client.command;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
-import org.cdc.redpack.RedPackConfig;
+import org.cdc.wycraft.WycraftConfig;
 
 import java.util.List;
 import java.util.Map;
@@ -30,12 +30,12 @@ public enum ChownCommand implements CommandBuilder {
 	}
 
 	private void setOwner(String owner) {
-		RedPackConfig.INSTANCE.owner = owner;
-		RedPackConfig.saveConfig();
+		WycraftConfig.INSTANCE.owner = owner;
+		WycraftConfig.saveConfig();
 	}
 
 	private String getOwner() {
-		return RedPackConfig.INSTANCE.owner;
+		return WycraftConfig.INSTANCE.owner;
 	}
 
 	public static class SubCommand extends AbstractCommand {

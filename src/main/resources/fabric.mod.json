@@ -7,17 +7,13 @@
   "authors": [],
   "contact": {},
   "license": "GPL-3.0",
-  "icon": "assets/redpack/icon.png",
   "environment": "client",
   "entrypoints": {
-    "fabric-datagen": [
-      "org.cdc.redpack.client.RedpackDataGenerator"
-    ],
     "client": [
-      "org.cdc.redpack.client.RedpackClient"
+      "org.cdc.wycraft.client.WycraftClient"
     ],
     "main": [
-      "org.cdc.redpack.Redpack"
+      "org.cdc.wycraft.Wycraft"
     ]
   },
   "mixins": [

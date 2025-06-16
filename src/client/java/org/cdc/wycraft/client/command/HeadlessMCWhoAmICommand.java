@@ -1,4 +1,4 @@
-package org.cdc.redpack.client.command;
+package org.cdc.wycraft.client.command;
 
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.AbstractCommand;

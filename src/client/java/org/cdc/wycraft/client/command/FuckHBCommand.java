@@ -1,4 +1,4 @@
-package org.cdc.redpack.client.command;
+package org.cdc.wycraft.client.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import me.earth.headlessmc.api.HeadlessMc;

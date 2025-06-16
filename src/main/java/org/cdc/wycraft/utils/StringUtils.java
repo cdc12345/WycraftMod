@@ -1,4 +1,4 @@
-package org.cdc.redpack.utils;
+package org.cdc.wycraft.utils;
 
 public class StringUtils {
 	public static String getMessage(String origin) {

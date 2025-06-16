@@ -1,4 +1,4 @@
-package org.cdc.redpack;
+package org.cdc.wycraft;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class Redpack implements ModInitializer {
+public class Wycraft implements ModInitializer {
 
-	private final Logger LOG = LoggerFactory.getLogger(Redpack.class);
+	private final Logger LOG = LoggerFactory.getLogger(Wycraft.class);
 
 	private final static Path configPath = FabricLoader.getInstance().getConfigDir().resolve("wycraft");
 
@@ -25,7 +25,7 @@ public class Redpack implements ModInitializer {
 			}
 		}
 		try {
-			RedPackConfig.loadConfig();
+			WycraftConfig.loadConfig();
 		} catch (IOException ignored) {
 		}
 	}

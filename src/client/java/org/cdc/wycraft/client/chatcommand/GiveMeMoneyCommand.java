@@ -1,4 +1,4 @@
-package org.cdc.redpack.client.chatcommand;
+package org.cdc.wycraft.client.chatcommand;
 
 public class GiveMeMoneyCommand extends AbstractChatCommand {
 	public GiveMeMoneyCommand() {

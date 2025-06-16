@@ -1,7 +1,7 @@
-package org.cdc.redpack.client.chatcommand;
+package org.cdc.wycraft.client.chatcommand;
 
-import org.cdc.redpack.RedPackConfig;
-import org.cdc.redpack.utils.TPPolicy;
+import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.utils.TPPolicy;
 
 public class TPPolicyChangeCommand extends AbstractChatCommand {
 	public TPPolicyChangeCommand() {
@@ -9,8 +9,8 @@ public class TPPolicyChangeCommand extends AbstractChatCommand {
 	}
 
 	@Override public ExecuteResult execute0(ChatCommandContext context, String[] args) {
-		RedPackConfig.INSTANCE.autoTpaPolicy = TPPolicy.valueOf(args[0].toUpperCase());
-		RedPackConfig.saveConfig();
+		WycraftConfig.INSTANCE.autoTpaPolicy = TPPolicy.valueOf(args[0].toUpperCase());
+		WycraftConfig.saveConfig();
 		return ExecuteResult.SUCCESS;
 	}
 }

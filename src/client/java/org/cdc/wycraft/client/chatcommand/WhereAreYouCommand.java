@@ -1,4 +1,4 @@
-package org.cdc.redpack.client.chatcommand;
+package org.cdc.wycraft.client.chatcommand;
 
 public class WhereAreYouCommand extends AbstractChatCommand {
 	public WhereAreYouCommand() {

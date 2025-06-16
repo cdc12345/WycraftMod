@@ -1,8 +1,8 @@
-package org.cdc.redpack.client.chatcommand;
+package org.cdc.wycraft.client.chatcommand;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import org.cdc.redpack.RedPackConfig;
+import org.cdc.wycraft.WycraftConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public abstract class AbstractChatCommand {
 	public boolean permit(ChatCommandContext context) {
 		if (onlyOwner) {
 			//需要发送者为主人
-			return context.owner.equals(context.sender) || RedPackConfig.INSTANCE.openToPublic || System.getProperty(
+			return context.owner.equals(context.sender) || WycraftConfig.INSTANCE.openToPublic || System.getProperty(
 					"red.debug", "false").equals("true");
 		} else {
 			return true;
@@ -53,10 +53,10 @@ public abstract class AbstractChatCommand {
 	}
 
 	protected String getPrefix(ChatCommandContext context) {
-		if (RedPackConfig.INSTANCE.chatCommandPrefixFormat == null) {
+		if (WycraftConfig.INSTANCE.chatCommandPrefixFormat == null) {
 			return "@" + context.rob.getName().getString() + " ";
 		} else {
-			return String.format(RedPackConfig.INSTANCE.chatCommandPrefixFormat, context.rob.getName().getString());
+			return String.format(WycraftConfig.INSTANCE.chatCommandPrefixFormat, context.rob.getName().getString());
 		}
 	}
 

@@ -1,11 +1,12 @@
-package org.cdc.redpack.client.chatcommand;
+package org.cdc.wycraft.client.chatcommand;
 
-import org.cdc.redpack.RedPackConfig;
+import org.cdc.wycraft.WycraftConfig;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Calendar;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -27,12 +28,12 @@ public class ThursdayCommand extends AbstractChatCommand {
 	}
 
 	@Override public boolean permit(ChatCommandContext context) {
-		return super.permit(context) && !RedPackConfig.INSTANCE.owner.equals(context.rob().getName().getString());
+		return super.permit(context) && !WycraftConfig.INSTANCE.owner.equals(context.rob().getName().getString());
 	}
 
 	@Override public ExecuteResult execute0(ChatCommandContext context, String[] args) {
-		Calendar calendar = Calendar.getInstance();
-		if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY && !isThursdayDelay()) {
+		LocalDate now = LocalDate.now();
+		if (now.getDayOfWeek() == DayOfWeek.THURSDAY && !isThursdayDelay()) {
 			context.handler().sendCommand("hb send-vault 50 1");
 			delayThursday();
 		}
@@ -42,14 +43,14 @@ public class ThursdayCommand extends AbstractChatCommand {
 	private void delayThursday() {
 		thursdayDelay = true;
 		try {
-			Files.copy(new ByteArrayInputStream(new byte[8]), RedPackConfig.getConfig().resolve(".thursdaylock"));
+			Files.copy(new ByteArrayInputStream(new byte[8]), WycraftConfig.getConfig().resolve(".thursdaylock"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		CompletableFuture.delayedExecutor(1, TimeUnit.DAYS).execute(() -> {
 			thursdayDelay = false;
 			try {
-				Files.delete(RedPackConfig.getConfig().resolve(".thursdaylock"));
+				Files.delete(WycraftConfig.getConfig().resolve(".thursdaylock"));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

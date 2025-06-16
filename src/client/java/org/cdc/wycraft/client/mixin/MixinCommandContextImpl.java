@@ -1,9 +1,9 @@
-package org.cdc.redpack.client.mixin;
+package org.cdc.wycraft.client.mixin;
 
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandContextImpl;
-import org.cdc.redpack.client.command.*;
+import org.cdc.wycraft.client.command.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 		add(new TPAutoCommand.SubCommand(ctx));
 		add(new FuckHBCommand.SubCommand(ctx));
 		add(new ChownCommand.SubCommand(ctx));
+		add(new HeadlessMCListCommand(ctx));
+		add(new PlayerListCommand.SubCommand(ctx));
 	}
 
 }
