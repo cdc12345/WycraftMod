@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
+import org.apache.logging.log4j.core.tools.picocli.CommandLine;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.chatcommand.*;
@@ -115,7 +116,9 @@ public class WycraftClient implements ClientModInitializer {
 									this::delayCommand));
 				});
 				Text value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
-				stringBuilder.add(text1.getString() + ":" + (value != null ? value.getString() : null));
+				stringBuilder.add(text1.getString() + ":" + (value != null ?
+						value.getString() :
+						CommandLine.Help.Ansi.Style.bg_red.on() + "None" + CommandLine.Help.Ansi.Style.reset.on()));
 			}
 		}
 	}

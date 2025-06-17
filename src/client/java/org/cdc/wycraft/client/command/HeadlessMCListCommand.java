@@ -16,7 +16,7 @@ public class HeadlessMCListCommand extends AbstractCommand {
 	@Override public void execute(String s, String... strings) throws CommandException {
 		var player = MinecraftClient.getInstance().player;
 		if (player != null) {
-			var list = player.networkHandler.getPlayerList();
+			var list = player.networkHandler.getListedPlayerListEntries();
 			ctx.log("玩家人数：" + list.size());
 			list.forEach(a -> {
 				ctx.log(Objects.requireNonNullElse(a.getDisplayName(), Text.literal(a.getProfile().getName()))
