@@ -17,7 +17,7 @@ public class HeadlessMCWhoAmICommand extends AbstractCommand {
 		if (MinecraftClient.getInstance().player != null) {
 			ClientPlayerEntity clientPlayerEntity = MinecraftClient.getInstance().player;
 			BlockPos pos = clientPlayerEntity.getBlockPos();
-			ctx.log(clientPlayerEntity.getName().getString() + ":X: " + pos.getX() + ",Y: " + pos.getY() + ",Z:"
+			ctx.log(clientPlayerEntity.getName().getString() + ":X: " + pos.getX() + ",Y: " + pos.getY() + ",Z: "
 					+ pos.getZ() + ",World: " + getWorldName(clientPlayerEntity.getWorld()));
 		}
 	}

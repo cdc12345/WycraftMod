@@ -16,7 +16,7 @@ public class TpAutoVisitor implements IEventVisitor {
 		if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.DENY) {
 			if (clickEvent.getValue().startsWith("/cmi tpdeny")) {
 				handler.ifPresent(a -> a.sendCommand(clickEvent.getValue().substring(1)));
-				context.delayCommand().get();
+				context.wycraftClient().delayCommand();
 			}
 		} else {
 			if (clickEvent.getValue().startsWith("/cmi tpaccept")) {
@@ -28,7 +28,7 @@ public class TpAutoVisitor implements IEventVisitor {
 						&& WycraftConfig.INSTANCE.owner.equals(sender)) {
 					handler.ifPresent(a -> a.sendCommand(clickEvent.getValue().substring(1)));
 				}
-				context.delayCommand().get();
+				context.wycraftClient().delayCommand();
 			}
 		}
 	}

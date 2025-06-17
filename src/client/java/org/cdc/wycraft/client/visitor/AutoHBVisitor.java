@@ -20,7 +20,7 @@ public class AutoHBVisitor implements IEventVisitor {
 				if (WycraftConfig.INSTANCE.maybeFail) {
 					double per = Math.random() * 100;
 					if (per > WycraftConfig.INSTANCE.probability || context.whole().getString().contains("1 ¥")) {
-						context.delayCommand().get();
+						context.wycraftClient().delayCommand();
 						LOG.info("哎哟，没抢到，数字为 {}", per);
 						return;
 					}
@@ -29,7 +29,7 @@ public class AutoHBVisitor implements IEventVisitor {
 				CompletableFuture.delayedExecutor(500, TimeUnit.MILLISECONDS).execute(() -> {
 					context.handler().ifPresent(a -> a.sendCommand(command));
 				});
-				context.delayCommand().get();
+				context.wycraftClient().delayCommand();
 			}
 			//方便命令，fuckhb抢红包
 			FuckHBCommand.getInstance().setLastHBCommand(command);

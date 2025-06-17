@@ -5,16 +5,14 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.chatcommand.*;
 import org.cdc.wycraft.client.command.*;
-import org.cdc.wycraft.client.visitor.AutoHBVisitor;
-import org.cdc.wycraft.client.visitor.IEventVisitor;
-import org.cdc.wycraft.client.visitor.TpAutoVisitor;
+import org.cdc.wycraft.client.visitor.EconomicVisitor;
+import org.cdc.wycraft.client.visitor.EventTextVisitor;
+import org.cdc.wycraft.client.visitor.ITextVisitor;
 import org.cdc.wycraft.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +35,7 @@ public class WycraftClient implements ClientModInitializer {
 	private boolean delay = false;
 
 	private final List<AbstractChatCommand> chatCommands = new ArrayList<>();
-	private final List<IEventVisitor> eventVisitors = new ArrayList<>();
+	private final List<ITextVisitor> siblingVisitor = new ArrayList<>();
 	public final int DELAY_TIME = 20;
 
 	@Override public void onInitializeClient() {
@@ -45,7 +43,7 @@ public class WycraftClient implements ClientModInitializer {
 		loadDelayStatus();
 
 		initChatCommands();
-		initEventVisitors();
+		initSiblingVisitors();
 		initClientCommands();
 
 		if (Wycraft.isDebug()) {
@@ -85,41 +83,22 @@ public class WycraftClient implements ClientModInitializer {
 		chatCommands.add(new ThrowItemCommand());
 	}
 
-	private void initEventVisitors() {
-		eventVisitors.add(new AutoHBVisitor());
-		eventVisitors.add(new TpAutoVisitor());
+	private void initSiblingVisitors() {
+		siblingVisitor.add(new EventTextVisitor());
+		siblingVisitor.add(EconomicVisitor.getInstance());
 	}
 
-	private void forEachSib(Text text, List<String> stringBuilder) {
-		for (Text text1 : text.getSiblings()) {
-			var hoverEvent = text1.getStyle().getHoverEvent();
-			var clickEvent = text1.getStyle().getClickEvent();
+	private void forEachSib(Text whole, List<String> printList) {
+		for (Text part : whole.getSiblings()) {
 			ClientPlayNetworkHandler handler;
 			if (MinecraftClient.getInstance().player != null) {
 				handler = MinecraftClient.getInstance().player.networkHandler;
 			} else {
 				handler = null;
 			}
-			if (clickEvent != null && !delay) {
-				eventVisitors.forEach(a -> {
-					a.visitClickEvent(clickEvent,
-							new IEventVisitor.EventContext(text, text1, Optional.ofNullable(handler),
-									this::delayCommand));
-				});
-				stringBuilder.add(
-						text1.getString() + ":" + clickEvent.getAction().name() + ":" + clickEvent.getValue());
-			}
-			if (hoverEvent != null && !delay) {
-				eventVisitors.forEach(a -> {
-					a.visitHoverEvent(hoverEvent,
-							new IEventVisitor.EventContext(text, text1, Optional.ofNullable(handler),
-									this::delayCommand));
-				});
-				Text value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
-				stringBuilder.add(text1.getString() + ":" + (value != null ?
-						value.getString() :
-						CommandLine.Help.Ansi.Style.bg_red.on() + "None" + CommandLine.Help.Ansi.Style.reset.on()));
-			}
+			siblingVisitor.forEach(a -> {
+				a.visit(part, new ITextVisitor.VisitorContext(whole, Optional.ofNullable(handler), this, printList));
+			});
 		}
 	}
 
@@ -167,13 +146,12 @@ public class WycraftClient implements ClientModInitializer {
 		}
 	}
 
-	private int delayCommand() {
+	public void delayCommand() {
 		delay = true;
 
 		CompletableFuture.delayedExecutor(DELAY_TIME, TimeUnit.MILLISECONDS).execute(() -> {
 			delay = false;
 		});
-		return DELAY_TIME;
 	}
 
 	private void loadDelayStatus() {
@@ -190,5 +168,9 @@ public class WycraftClient implements ClientModInitializer {
 				}
 			});
 		}
+	}
+
+	public boolean isNotDelay() {
+		return !delay;
 	}
 }

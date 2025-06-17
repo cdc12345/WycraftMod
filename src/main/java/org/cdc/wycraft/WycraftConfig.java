@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import org.cdc.wycraft.utils.TPPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +21,31 @@ public class WycraftConfig {
 
 	private static final Logger LOG = LoggerFactory.getLogger(WycraftConfig.class);
 
+	private static final Gson gson;
+	public static final Event<ConfigSaved> CONFIG_SAVED_EVENT;
+	public static final Event<ConfigLoaded> CONFIG_LOADED_EVENT;
+
 	private static final Path config;
 
 	static {
 		INSTANCE = new WycraftConfig();
 		gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().setPrettyPrinting().create();
 		config = Wycraft.getConfigPath().resolve("wycraft.json");
+		CONFIG_SAVED_EVENT = EventFactory.createArrayBacked(ConfigSaved.class, a -> gson1 -> {
+			boolean allow = true;
+			for (ConfigSaved configSaved : a) {
+				allow &= configSaved.onSaved(gson1);
+			}
+			return allow;
+		});
+		CONFIG_LOADED_EVENT = EventFactory.createArrayBacked(ConfigLoaded.class, a -> gson1 -> {
+			boolean allow = true;
+			for (ConfigLoaded configSaved : a) {
+				allow &= configSaved.onLoaded(gson1);
+			}
+			return allow;
+		});
 	}
-
-	private static final Gson gson;
 
 	public static WycraftConfig INSTANCE;
 
@@ -49,14 +67,24 @@ public class WycraftConfig {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		CONFIG_SAVED_EVENT.invoker().onSaved(gson);
 	}
 
 	public static void loadConfig() throws IOException {
 		LOG.info("Load the config");
 		INSTANCE = gson.fromJson(Files.readString(config), WycraftConfig.class);
+		CONFIG_LOADED_EVENT.invoker().onLoaded(gson);
 	}
 
 	public static Path getConfig() {
 		return config;
+	}
+
+	public interface ConfigSaved {
+		boolean onSaved(Gson gson);
+	}
+
+	public interface ConfigLoaded {
+		boolean onLoaded(Gson gson);
 	}
 }

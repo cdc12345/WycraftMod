@@ -13,12 +13,18 @@ public abstract class AbstractChatCommand {
 	protected String commandParent;
 	protected boolean onlyOwner;
 	protected List<String> alias;
+	protected String delimit;
 
 	protected AbstractChatCommand(String commandParent) {
+		this(commandParent, " ");
+	}
+
+	protected AbstractChatCommand(String commandParent, String delimit) {
 		this.commandParent = commandParent;
 		this.onlyOwner = true;
-		alias = new ArrayList<>();
+		this.alias = new ArrayList<>();
 		addAlias(commandParent);
+		this.delimit = delimit;
 	}
 
 	protected void setOnlyOwner(boolean onlyOwner) {
@@ -46,7 +52,7 @@ public abstract class AbstractChatCommand {
 			return context.message.startsWith(combine.get());
 		})) {
 			String args = context.message.replaceFirst(combine.get(), "");
-			return execute0(context, args.isEmpty() ? new String[0] : args.split(" "));
+			return execute0(context, args.isEmpty() ? new String[0] : args.split(delimit));
 		}
 		//服务器上行有限，就算执行不了，我也不想做什么反馈，日后再说。。。
 		return ExecuteResult.FAIL;
