@@ -24,13 +24,16 @@ public class EconomyCommand implements ICommandBuilder {
 
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("ecolog").executes(a -> {
+			double total = 0;
 			String decoration = "=================";
 			a.getSource().sendFeedback(Text.literal(decoration));
 			for (ActionEntry actionEntry : EconomicVisitor.getInstance().getLogList()) {
 				a.getSource().sendFeedback(
 						Text.literal(actionEntry.date()).append("	").append(actionEntry.action()).append("	")
 								.append(actionEntry.result()));
+				total += Double.parseDouble(actionEntry.result());
 			}
+			a.getSource().sendFeedback(Text.literal("Total: " + total));
 			a.getSource().sendFeedback(Text.literal(decoration));
 			return 0;
 		});
@@ -43,11 +46,14 @@ public class EconomyCommand implements ICommandBuilder {
 		}
 
 		@Override public void execute(String s, String... strings) throws CommandException {
+			double total = 0;
 			String decoration = "=================";
 			ctx.log(decoration);
 			for (ActionEntry actionEntry : EconomicVisitor.getInstance().getLogList()) {
 				ctx.log(actionEntry.date() + "	" + actionEntry.action() + "	" + actionEntry.result());
+				total += Double.parseDouble(actionEntry.result());
 			}
+			ctx.log("Total: " + total);
 			ctx.log(decoration);
 		}
 	}

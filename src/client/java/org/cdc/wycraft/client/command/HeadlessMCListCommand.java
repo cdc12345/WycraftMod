@@ -17,11 +17,16 @@ public class HeadlessMCListCommand extends AbstractCommand {
 		var player = MinecraftClient.getInstance().player;
 		if (player != null) {
 			var list = player.networkHandler.getListedPlayerListEntries();
-			ctx.log("玩家人数：" + list.size());
-			list.forEach(a -> {
-				ctx.log(Objects.requireNonNullElse(a.getDisplayName(), Text.literal(a.getProfile().getName()))
-						.getString());
-			});
+			var entry = MinecraftClient.getInstance().getCurrentServerEntry();
+			if (entry != null && entry.players != null) {
+				ctx.log("玩家人数:" + Objects.requireNonNull(
+						MinecraftClient.getInstance().getCurrentServerEntry().players).online());
+			} else {
+				ctx.log("玩家人数: " + list.size());
+			}
+			list.forEach(a -> ctx.log(
+					Objects.requireNonNullElse(a.getDisplayName(), Text.literal(a.getProfile().getName()))
+							.getString()));
 		}
 	}
 }
