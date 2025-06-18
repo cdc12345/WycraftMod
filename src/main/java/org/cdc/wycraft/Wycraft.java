@@ -24,10 +24,6 @@ public class Wycraft implements ModInitializer {
 			} catch (IOException ignored) {
 			}
 		}
-		try {
-			WycraftConfig.loadConfig();
-		} catch (IOException ignored) {
-		}
 	}
 
 	public static boolean isDebug() {

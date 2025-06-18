@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.client.WycraftClient;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public enum ChownCommand implements ICommandBuilder {
 
 	private void setOwner(String owner) {
 		WycraftConfig.INSTANCE.owner = owner;
-		WycraftConfig.saveConfig();
+		WycraftConfig.saveConfig(WycraftClient.getMyName());
 	}
 
 	private String getOwner() {

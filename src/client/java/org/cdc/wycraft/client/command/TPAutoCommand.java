@@ -14,6 +14,8 @@ import org.cdc.wycraft.utils.TPPolicy;
 import java.util.List;
 import java.util.Map;
 
+import static org.cdc.wycraft.client.WycraftClient.getMyName;
+
 public class TPAutoCommand implements ICommandBuilder {
 	private static TPAutoCommand INSTANCE;
 
@@ -45,14 +47,14 @@ public class TPAutoCommand implements ICommandBuilder {
 	private void setTPPolicy(String tpPolicy) {
 		if (tpPolicy != null) {
 			WycraftConfig.INSTANCE.autoTpaPolicy = TPPolicy.valueOf(tpPolicy.toUpperCase());
-			WycraftConfig.saveConfig();
+			WycraftConfig.saveConfig(getMyName());
 		}
 	}
 
 	private void setTPPolicy(TPPolicy tp) {
 		if (tp != null) {
 			WycraftConfig.INSTANCE.autoTpaPolicy = tp;
-			WycraftConfig.saveConfig();
+			WycraftConfig.saveConfig(getMyName());
 		}
 	}
 

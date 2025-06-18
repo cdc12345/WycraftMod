@@ -1,6 +1,7 @@
 package org.cdc.wycraft.client.chatcommand;
 
 import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.client.WycraftClient;
 import org.cdc.wycraft.utils.TPPolicy;
 
 public class TPPolicyChangeCommand extends AbstractChatCommand {
@@ -10,7 +11,7 @@ public class TPPolicyChangeCommand extends AbstractChatCommand {
 
 	@Override public ExecuteResult execute0(ChatCommandContext context, String[] args) {
 		WycraftConfig.INSTANCE.autoTpaPolicy = TPPolicy.valueOf(args[0].toUpperCase());
-		WycraftConfig.saveConfig();
+		WycraftConfig.saveConfig(WycraftClient.getMyName());
 		return ExecuteResult.SUCCESS;
 	}
 }

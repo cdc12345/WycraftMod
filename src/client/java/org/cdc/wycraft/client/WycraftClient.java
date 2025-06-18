@@ -60,6 +60,8 @@ public class WycraftClient implements ClientModInitializer {
 			}
 			checkChatCommand(text.getString());
 		});
+
+		WycraftConfig.loadConfig(getMyName());
 	}
 
 	private void initClientCommands() {
@@ -71,6 +73,7 @@ public class WycraftClient implements ClientModInitializer {
 			commandDispatcher.register(DropWycraftCoinCommand.getInstance().buildCommand());
 			commandDispatcher.register(FuckHBCommand.getInstance().buildCommand());
 			commandDispatcher.register(PlayerListCommand.getInstance().buildCommand());
+			commandDispatcher.register(EconomyCommand.getInstance().buildCommand());
 		});
 	}
 
@@ -113,7 +116,7 @@ public class WycraftClient implements ClientModInitializer {
 		}
 
 		if (MinecraftClient.getInstance().player != null) {
-			String myName = MinecraftClient.getInstance().player.getName().getString();
+			String myName = getMyName();
 			LOG.debug(sender);
 			var handler = MinecraftClient.getInstance().player.networkHandler;
 			if (handler != null) {
@@ -172,5 +175,12 @@ public class WycraftClient implements ClientModInitializer {
 
 	public boolean isNotDelay() {
 		return !delay;
+	}
+
+	public static String getMyName() {
+		if (MinecraftClient.getInstance().player == null) {
+			return "";
+		}
+		return MinecraftClient.getInstance().player.getName().getString();
 	}
 }

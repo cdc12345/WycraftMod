@@ -59,20 +59,49 @@ public class WycraftConfig {
 	@Expose public int probability = 40;
 	@Expose public String chatCommandPrefixFormat = "@%s ";
 
-	public static void saveConfig() {
+	public static void saveConfig(String name) {
 		LOG.debug("save the config");
-		try {
-			Files.copy(new ByteArrayInputStream(gson.toJson(INSTANCE).getBytes(StandardCharsets.UTF_8)), config,
-					StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		if (name == null) {
+			try {
+				Files.copy(new ByteArrayInputStream(gson.toJson(INSTANCE).getBytes(StandardCharsets.UTF_8)), config,
+						StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException ignored) {
+				LOG.info("Save Failed");
+			}
+		} else {
+			Path path = Wycraft.getConfigPath().resolve(name);
+			try {
+				if (!Files.exists(path)) {
+					Files.createDirectory(path);
+				}
+				Files.copy(new ByteArrayInputStream(gson.toJson(INSTANCE).getBytes(StandardCharsets.UTF_8)),
+						path.resolve("wycraft.json"), StandardCopyOption.REPLACE_EXISTING);
+			} catch (Exception ignored) {
+				LOG.info("Save Failed: {}", name);
+			}
 		}
 		CONFIG_SAVED_EVENT.invoker().onSaved(gson);
 	}
 
-	public static void loadConfig() throws IOException {
+	public static void loadConfig(String name) {
 		LOG.info("Load the config");
-		INSTANCE = gson.fromJson(Files.readString(config), WycraftConfig.class);
+		if (name == null) {
+			try {
+				INSTANCE = gson.fromJson(Files.readString(config), WycraftConfig.class);
+			} catch (IOException e) {
+				LOG.info("Load Failed");
+			}
+		} else {
+			Path path = Wycraft.getConfigPath().resolve(name);
+			try {
+				if (!Files.exists(path)) {
+					Files.createDirectory(path);
+				}
+				INSTANCE = gson.fromJson(Files.readString(path.resolve("wycraft.json")), WycraftConfig.class);
+			} catch (Exception ignored) {
+				LOG.info("Load Failed: {}", name);
+			}
+		}
 		CONFIG_LOADED_EVENT.invoker().onLoaded(gson);
 	}
 

@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import org.cdc.wycraft.WycraftConfig;
 
+import static org.cdc.wycraft.client.WycraftClient.getMyName;
+
 public enum AutoHBCommand implements ICommandBuilder {
 	INSTANCE;
 
@@ -13,7 +15,7 @@ public enum AutoHBCommand implements ICommandBuilder {
 		return ClientCommandManager.literal("autohb").executes(a -> {
 			WycraftConfig.INSTANCE.enableHB = !WycraftConfig.INSTANCE.enableHB;
 			a.getSource().sendFeedback(Text.literal("AutoHB: " + WycraftConfig.INSTANCE.enableHB));
-			WycraftConfig.saveConfig();
+			WycraftConfig.saveConfig(getMyName());
 			return 0;
 		});
 	}

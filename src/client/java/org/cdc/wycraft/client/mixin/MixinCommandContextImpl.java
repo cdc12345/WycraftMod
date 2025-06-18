@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 		add(new ChownCommand.SubCommand(ctx));
 		add(new HeadlessMCListCommand(ctx));
 		add(new PlayerListCommand.SubCommand(ctx));
+		add(new EconomyCommand.SubCommand(ctx));
 	}
 
 }

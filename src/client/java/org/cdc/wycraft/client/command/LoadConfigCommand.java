@@ -6,9 +6,9 @@ import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.text.Text;
 import org.cdc.wycraft.WycraftConfig;
-
-import java.io.IOException;
+import org.cdc.wycraft.client.WycraftClient;
 
 public class LoadConfigCommand implements ICommandBuilder {
 
@@ -22,11 +22,8 @@ public class LoadConfigCommand implements ICommandBuilder {
 
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("loadConfig").executes(a -> {
-			try {
-				WycraftConfig.loadConfig();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			WycraftConfig.loadConfig(WycraftClient.getMyName());
+			a.getSource().sendFeedback(Text.literal("Load the config"));
 			return 0;
 		});
 	}
@@ -38,12 +35,8 @@ public class LoadConfigCommand implements ICommandBuilder {
 		}
 
 		@Override public void execute(String s, String... strings) throws CommandException {
-			try {
-				WycraftConfig.loadConfig();
-				ctx.log("Loading the config");
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			WycraftConfig.loadConfig(WycraftClient.getMyName());
+			ctx.log("Loading the config");
 		}
 	}
 
