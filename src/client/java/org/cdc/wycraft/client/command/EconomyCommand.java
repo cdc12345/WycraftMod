@@ -7,8 +7,8 @@ import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
-import org.cdc.wycraft.client.visitor.EconomicVisitor;
 import org.cdc.wycraft.utils.ActionEntry;
+import org.cdc.wycraft.utils.LogsDao;
 
 public class EconomyCommand implements ICommandBuilder {
 
@@ -27,7 +27,7 @@ public class EconomyCommand implements ICommandBuilder {
 			double total = 0;
 			String decoration = "=================";
 			a.getSource().sendFeedback(Text.literal(decoration));
-			for (ActionEntry actionEntry : EconomicVisitor.getInstance().getLogList()) {
+			for (ActionEntry actionEntry : LogsDao.getInstance().queryAllEconomicEntries()) {
 				a.getSource().sendFeedback(
 						Text.literal(actionEntry.date()).append("	").append(actionEntry.action()).append("	")
 								.append(actionEntry.result()));
@@ -49,7 +49,7 @@ public class EconomyCommand implements ICommandBuilder {
 			double total = 0;
 			String decoration = "=================";
 			ctx.log(decoration);
-			for (ActionEntry actionEntry : EconomicVisitor.getInstance().getLogList()) {
+			for (ActionEntry actionEntry : LogsDao.getInstance().queryAllEconomicEntries()) {
 				ctx.log(actionEntry.date() + "	" + actionEntry.action() + "	" + actionEntry.result());
 				total += Double.parseDouble(actionEntry.result());
 			}

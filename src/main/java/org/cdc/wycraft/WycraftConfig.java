@@ -6,6 +6,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import org.cdc.wycraft.utils.ActionEntry;
 import org.cdc.wycraft.utils.TPPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WycraftConfig {
 
@@ -58,6 +61,8 @@ public class WycraftConfig {
 	//ÇÀºì°üµÄ¸ÅÂÊ
 	@Expose public int probability = 40;
 	@Expose public String chatCommandPrefixFormat = "@%s ";
+
+	public List<ActionEntry> logList = new ArrayList<>();
 
 	public static void saveConfig(String name) {
 		LOG.debug("save the config");
@@ -103,10 +108,6 @@ public class WycraftConfig {
 			}
 		}
 		CONFIG_LOADED_EVENT.invoker().onLoaded(gson);
-	}
-
-	public static Path getConfig() {
-		return config;
 	}
 
 	public interface ConfigSaved {

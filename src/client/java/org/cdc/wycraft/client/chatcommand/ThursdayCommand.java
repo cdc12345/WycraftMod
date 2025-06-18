@@ -1,14 +1,13 @@
 package org.cdc.wycraft.client.chatcommand;
 
 import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.client.visitor.EconomicVisitor;
+import org.cdc.wycraft.utils.DateUtils;
+import org.cdc.wycraft.utils.LogsDao;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 public class ThursdayCommand extends AbstractChatCommand {
 
@@ -19,8 +18,6 @@ public class ThursdayCommand extends AbstractChatCommand {
 			INSTANCE = new ThursdayCommand();
 		return INSTANCE;
 	}
-
-	private boolean thursdayDelay = false;
 
 	protected ThursdayCommand() {
 		super("今天疯狂星期四,v我50");
@@ -41,27 +38,14 @@ public class ThursdayCommand extends AbstractChatCommand {
 	}
 
 	private void delayThursday() {
-		thursdayDelay = true;
-		try {
-			Files.copy(new ByteArrayInputStream(new byte[8]), WycraftConfig.getConfig().resolve(".thursdaylock"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		CompletableFuture.delayedExecutor(1, TimeUnit.DAYS).execute(() -> {
-			thursdayDelay = false;
-			try {
-				Files.delete(WycraftConfig.getConfig().resolve(".thursdaylock"));
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		});
-	}
-
-	public void setThursdayDelay(boolean thursdayDelay) {
-		this.thursdayDelay = thursdayDelay;
+		EconomicVisitor.getInstance().addOutcome("50.00", commandParent);
 	}
 
 	public boolean isThursdayDelay() {
-		return thursdayDelay;
+		return WycraftConfig.INSTANCE.logList.stream().anyMatch(a -> {
+			LocalDate date = DateUtils.toInstant(a.date());
+			return a.action().equals(LogsDao.ECONOMIC_OUTCOME) && date.getDayOfWeek() == DayOfWeek.THURSDAY
+					&& ChronoUnit.DAYS.between(date, LocalDate.now()) > 1;
+		});
 	}
 }

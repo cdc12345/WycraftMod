@@ -17,11 +17,6 @@ import org.cdc.wycraft.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,16 +35,14 @@ public class WycraftClient implements ClientModInitializer {
 
 	@Override public void onInitializeClient() {
 		LOG.info("Starting");
-		loadDelayStatus();
 
 		initChatCommands();
 		initSiblingVisitors();
 		initClientCommands();
 
 		if (Wycraft.isDebug()) {
-			ClientReceiveMessageEvents.CHAT.register((text, signedMessage, gameProfile, parameters, instant) -> {
-				checkChatCommand(text.getString());
-			});
+			ClientReceiveMessageEvents.CHAT.register(
+					(text, signedMessage, gameProfile, parameters, instant) -> checkChatCommand(text.getString()));
 		}
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
 			LOG.debug(text.toString());
@@ -99,9 +92,8 @@ public class WycraftClient implements ClientModInitializer {
 			} else {
 				handler = null;
 			}
-			siblingVisitor.forEach(a -> {
-				a.visit(part, new ITextVisitor.VisitorContext(whole, Optional.ofNullable(handler), this, printList));
-			});
+			siblingVisitor.forEach(a -> a.visit(part,
+					new ITextVisitor.VisitorContext(whole, Optional.ofNullable(handler), this, printList)));
 		}
 	}
 
@@ -152,25 +144,7 @@ public class WycraftClient implements ClientModInitializer {
 	public void delayCommand() {
 		delay = true;
 
-		CompletableFuture.delayedExecutor(DELAY_TIME, TimeUnit.MILLISECONDS).execute(() -> {
-			delay = false;
-		});
-	}
-
-	private void loadDelayStatus() {
-		Path lock = WycraftConfig.getConfig().resolve(".thursdaylock");
-		LocalDate localDate = LocalDate.now();
-		if (Files.exists(lock) && localDate.getDayOfWeek() == DayOfWeek.THURSDAY) {
-			ThursdayCommand.getInstance().setThursdayDelay(true);
-			CompletableFuture.delayedExecutor(1, TimeUnit.DAYS).execute(() -> {
-				ThursdayCommand.getInstance().setThursdayDelay(false);
-				try {
-					Files.delete(WycraftConfig.getConfig().resolve(".thursdaylock"));
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			});
-		}
+		CompletableFuture.delayedExecutor(DELAY_TIME, TimeUnit.MILLISECONDS).execute(() -> delay = false);
 	}
 
 	public boolean isNotDelay() {
