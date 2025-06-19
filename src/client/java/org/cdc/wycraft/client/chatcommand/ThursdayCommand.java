@@ -7,6 +7,7 @@ import org.cdc.wycraft.utils.LogsDao;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 
 public class ThursdayCommand extends AbstractChatCommand {
@@ -43,8 +44,9 @@ public class ThursdayCommand extends AbstractChatCommand {
 
 	public boolean isThursdayDelay() {
 		return WycraftConfig.INSTANCE.logList.stream().anyMatch(a -> {
-			LocalDate date = DateUtils.toInstant(a.date());
-			return a.action().equals(LogsDao.ECONOMIC_OUTCOME) && date.getDayOfWeek() == DayOfWeek.THURSDAY
+			var date = DateUtils.toInstant(a.date());
+			return a.action().equals(LogsDao.ECONOMIC_OUTCOME)
+					&& date.get(ChronoField.DAY_OF_WEEK) == DayOfWeek.THURSDAY.getValue()
 					&& ChronoUnit.DAYS.between(date, LocalDate.now()) > 1;
 		});
 	}

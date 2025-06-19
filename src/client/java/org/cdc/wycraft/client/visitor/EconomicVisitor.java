@@ -4,9 +4,12 @@ import com.google.gson.reflect.TypeToken;
 import net.minecraft.text.Text;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.client.WycraftClient;
 import org.cdc.wycraft.utils.ActionEntry;
 import org.cdc.wycraft.utils.DateUtils;
 import org.cdc.wycraft.utils.LogsDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,13 +17,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.cdc.wycraft.client.WycraftClient.getMyName;
 
 public class EconomicVisitor implements ITextVisitor {
+	private static final Logger LOGGER = LoggerFactory.getLogger(EconomicVisitor.class);
 
 	private static EconomicVisitor INSTANCE;
 
@@ -37,7 +41,8 @@ public class EconomicVisitor implements ITextVisitor {
 				Files.createDirectory(config.getParent());
 				Files.copy(new ByteArrayInputStream(gson.toJson(getLogList()).getBytes(StandardCharsets.UTF_8)), config,
 						StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException ignored) {
+			} catch (IOException e) {
+				LOGGER.info("{}:{}", e.getClass().getName(), e.getMessage());
 			}
 			return true;
 		});
@@ -45,7 +50,8 @@ public class EconomicVisitor implements ITextVisitor {
 			try {
 				WycraftConfig.INSTANCE.logList = gson.fromJson(Files.readString(config),
 						new TypeToken<ArrayList<ActionEntry>>() {});
-			} catch (IOException ignored) {
+			} catch (IOException e) {
+				LOGGER.info("{}:{}", e.getClass().getName(), e.getMessage());
 			}
 			return true;
 		});
@@ -79,7 +85,8 @@ public class EconomicVisitor implements ITextVisitor {
 
 	public void addEconomicEntry(String actionType, String result, String backup) {
 		getLogList().add(
-				new ActionEntry(DateUtils.getDefaultFormatter().format(LocalDate.now()), actionType, result, backup));
+				new ActionEntry(DateUtils.getDefaultFormatter().format(Instant.now()), actionType, result, backup));
+		WycraftConfig.saveConfig(WycraftClient.getMyName());
 	}
 
 	public void addIncome(String result, String backup) {

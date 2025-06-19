@@ -70,8 +70,8 @@ public class WycraftConfig {
 			try {
 				Files.copy(new ByteArrayInputStream(gson.toJson(INSTANCE).getBytes(StandardCharsets.UTF_8)), config,
 						StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException ignored) {
-				LOG.info("Save Failed");
+			} catch (IOException e) {
+				LOG.info("Save Failed: {}", e.getMessage());
 			}
 		} else {
 			Path path = Wycraft.getConfigPath().resolve(name);
@@ -81,8 +81,8 @@ public class WycraftConfig {
 				}
 				Files.copy(new ByteArrayInputStream(gson.toJson(INSTANCE).getBytes(StandardCharsets.UTF_8)),
 						path.resolve("wycraft.json"), StandardCopyOption.REPLACE_EXISTING);
-			} catch (Exception ignored) {
-				LOG.info("Save Failed: {}", name);
+			} catch (Exception e) {
+				LOG.info("Save {} Failed: {}", name, e.getMessage());
 			}
 		}
 		CONFIG_SAVED_EVENT.invoker().onSaved(gson);
@@ -94,7 +94,7 @@ public class WycraftConfig {
 			try {
 				INSTANCE = gson.fromJson(Files.readString(config), WycraftConfig.class);
 			} catch (IOException e) {
-				LOG.info("Load Failed");
+				LOG.info("Load Failed: {}", e.getMessage());
 			}
 		} else {
 			Path path = Wycraft.getConfigPath().resolve(name);
@@ -103,8 +103,8 @@ public class WycraftConfig {
 					Files.createDirectory(path);
 				}
 				INSTANCE = gson.fromJson(Files.readString(path.resolve("wycraft.json")), WycraftConfig.class);
-			} catch (Exception ignored) {
-				LOG.info("Load Failed: {}", name);
+			} catch (Exception e) {
+				LOG.info("Load {} Failed: {}", name, e.getMessage());
 			}
 		}
 		CONFIG_LOADED_EVENT.invoker().onLoaded(gson);
