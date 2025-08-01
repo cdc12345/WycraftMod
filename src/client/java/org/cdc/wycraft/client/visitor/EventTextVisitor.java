@@ -1,5 +1,6 @@
 package org.cdc.wycraft.client.visitor;
 
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.core.tools.picocli.CommandLine;
@@ -26,8 +27,9 @@ public class EventTextVisitor implements ITextVisitor {
 						new IEventVisitor.EventContext(context.whole(), sibling, context.handler(),
 								context.wycraftClient()));
 			});
-			context.printList()
-					.add(sibling.getString() + ":" + clickEvent.getAction().name() + ":" + clickEvent.getValue());
+			if (clickEvent instanceof ClickEvent.RunCommand(String command)) {
+				context.printList().add(sibling.getString() + ":" + clickEvent.getAction().name() + ":" + command);
+			}
 		}
 		if (hoverEvent != null && context.wycraftClient().isNotDelay()) {
 			eventVisitors.forEach(a -> {
@@ -35,10 +37,11 @@ public class EventTextVisitor implements ITextVisitor {
 						new IEventVisitor.EventContext(context.whole(), sibling, context.handler(),
 								context.wycraftClient()));
 			});
-			Text value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
-			context.printList().add(sibling.getString() + ":" + (value != null ?
-					value.getString() :
-					CommandLine.Help.Ansi.Style.bg_red.on() + "None" + CommandLine.Help.Ansi.Style.reset.on()));
+			if (hoverEvent instanceof HoverEvent.ShowText(Text value)) {
+				context.printList().add(sibling.getString() + ":" + (value != null ?
+						value.getString() :
+						CommandLine.Help.Ansi.Style.bg_red.on() + "None" + CommandLine.Help.Ansi.Style.reset.on()));
+			}
 		}
 	}
 }

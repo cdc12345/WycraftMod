@@ -73,7 +73,7 @@ public class DropWycraftCoinCommand implements ICommandBuilder {
 					MinecraftClient.getInstance().setScreen(null);
 				} else if (slot > -1) {
 					inv.setSelectedSlot(slot);
-					player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(inv.selectedSlot));
+					player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(inv.getSelectedSlot()));
 					MinecraftClient.getInstance().player.dropSelectedItem(true);
 				}
 			}

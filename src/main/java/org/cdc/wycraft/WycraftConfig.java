@@ -2,6 +2,7 @@ package org.cdc.wycraft;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import net.fabricmc.fabric.api.event.Event;
@@ -61,8 +62,15 @@ public class WycraftConfig {
 	//ÇÀºì°üµÄ¸ÅÂÊ
 	@Expose public int probability = 40;
 	@Expose public String chatCommandPrefixFormat = "@%s ";
+	@Expose public JsonObject mappedCmd;
 
 	public List<ActionEntry> logList = new ArrayList<>();
+
+	WycraftConfig() {
+		mappedCmd = new JsonObject();
+		mappedCmd.addProperty("tpa", "cmi tpa");
+		mappedCmd.addProperty("back", "cmi back");
+	}
 
 	public static void saveConfig(String name) {
 		LOG.debug("save the config");

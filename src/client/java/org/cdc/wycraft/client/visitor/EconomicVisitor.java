@@ -35,12 +35,15 @@ public class EconomicVisitor implements ITextVisitor {
 	}
 
 	private EconomicVisitor() {
-		final Path config = Wycraft.getConfigPath().resolve(getMyName()).resolve("account.json");
+		final Path config = Wycraft.getConfigPath().resolve(WycraftClient.getMyName()).resolve("account.json");
 		WycraftConfig.CONFIG_SAVED_EVENT.register(gson -> {
 			try {
-				Files.createDirectory(config.getParent());
+				if (!Files.exists(config.getParent())) {
+					Files.createDirectory(config.getParent());
+				}
 				Files.copy(new ByteArrayInputStream(gson.toJson(getLogList()).getBytes(StandardCharsets.UTF_8)), config,
 						StandardCopyOption.REPLACE_EXISTING);
+				LOGGER.info(config.toString());
 			} catch (IOException e) {
 				LOGGER.info("{}:{}", e.getClass().getName(), e.getMessage());
 			}
@@ -60,8 +63,8 @@ public class EconomicVisitor implements ITextVisitor {
 	@Override public void visit(Text sibling, VisitorContext textContext) {
 		var prefix = "[雾雨经济]";
 		var str = textContext.whole().getString();
-		if (sibling.getString().startsWith(prefix)) {
-			String work = str.replace(prefix, "");
+		if (sibling.getString().contains(prefix)) {
+			String work = str.replace(prefix, "").trim();
 			//income
 			if (work.contains("给予你") || work.contains("收到转账")) {
 				String keyword = "(给予你 |收到转账 )";

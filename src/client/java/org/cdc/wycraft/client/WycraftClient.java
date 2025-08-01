@@ -1,8 +1,10 @@
 package org.cdc.wycraft.client;
 
+import com.google.gson.JsonElement;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.text.Text;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -41,8 +44,10 @@ public class WycraftClient implements ClientModInitializer {
 		initClientCommands();
 
 		if (Wycraft.isDebug()) {
-			ClientReceiveMessageEvents.CHAT.register(
-					(text, signedMessage, gameProfile, parameters, instant) -> checkChatCommand(text.getString()));
+			ClientReceiveMessageEvents.CHAT.register((text, signedMessage, gameProfile, parameters, instant) -> {
+				checkChatCommand(text.getString());
+				EconomicVisitor.getInstance().addIncome("10.0", text.getString());
+			});
 		}
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
 			LOG.debug(text.toString());
@@ -52,6 +57,16 @@ public class WycraftClient implements ClientModInitializer {
 				LOG.info(list.toString());
 			}
 			checkChatCommand(text.getString());
+		});
+		ClientSendMessageEvents.MODIFY_COMMAND.register((command) -> {
+			var map = WycraftConfig.INSTANCE.mappedCmd;
+			var entrySet = map.entrySet();
+			for (Map.Entry<String, JsonElement> entry : entrySet) {
+				if (command.equals(entry.getKey())) {
+					return command.replaceFirst(entry.getKey(), entry.getValue().getAsString());
+				}
+			}
+			return command;
 		});
 
 		WycraftConfig.loadConfig(getMyName());
@@ -67,6 +82,7 @@ public class WycraftClient implements ClientModInitializer {
 			commandDispatcher.register(FuckHBCommand.getInstance().buildCommand());
 			commandDispatcher.register(PlayerListCommand.getInstance().buildCommand());
 			commandDispatcher.register(EconomyCommand.getInstance().buildCommand());
+			commandDispatcher.register(MapCMDCommand.getInstance().buildCommand());
 		});
 	}
 
@@ -152,9 +168,6 @@ public class WycraftClient implements ClientModInitializer {
 	}
 
 	public static String getMyName() {
-		if (MinecraftClient.getInstance().player == null) {
-			return "";
-		}
-		return MinecraftClient.getInstance().player.getName().getString();
+		return MinecraftClient.getInstance().getGameProfile().getName();
 	}
 }

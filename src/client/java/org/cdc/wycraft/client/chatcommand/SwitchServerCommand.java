@@ -14,7 +14,7 @@ public class SwitchServerCommand extends AbstractChatCommand {
 	@Override public ExecuteResult execute0(ChatCommandContext context, String[] args) {
 		String destination = args[0];
 		if (serverName.containsKey(destination)) {
-			context.handler().sendCommand(serverName.get(destination));
+			context.handler().sendChatCommand(serverName.get(destination));
 			context.handler().sendChatMessage("好的，我马上到");
 		}
 		return ExecuteResult.SUCCESS;

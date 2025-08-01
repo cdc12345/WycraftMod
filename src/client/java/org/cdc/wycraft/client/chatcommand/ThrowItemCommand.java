@@ -52,7 +52,7 @@ public class ThrowItemCommand extends AbstractChatCommand {
 			}
 			if (slot > -1) {
 				inv.setSelectedSlot(slot);
-				context.handler().sendPacket(new UpdateSelectedSlotC2SPacket(inv.selectedSlot));
+				context.handler().sendPacket(new UpdateSelectedSlotC2SPacket(inv.getSelectedSlot()));
 				player.dropSelectedItem(true);
 			}
 		}

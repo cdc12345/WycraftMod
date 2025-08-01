@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+import org.cdc.wycraft.client.mixin.PlayerListHudAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +37,11 @@ public class PlayerListCommand implements ICommandBuilder {
 	}
 
 	private Text getHeader() {
-		return MinecraftClient.getInstance().inGameHud.getPlayerListHud().header;
+		return ((PlayerListHudAccessor) MinecraftClient.getInstance().inGameHud.getPlayerListHud()).getHeader();
 	}
 
 	private Text getFooter() {
-		return MinecraftClient.getInstance().inGameHud.getPlayerListHud().footer;
+		return ((PlayerListHudAccessor) MinecraftClient.getInstance().inGameHud.getPlayerListHud()).getFooter();
 	}
 
 	public static class SubCommand extends AbstractCommand {

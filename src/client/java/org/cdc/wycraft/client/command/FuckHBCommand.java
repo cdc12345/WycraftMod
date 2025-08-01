@@ -28,7 +28,7 @@ public class FuckHBCommand implements ICommandBuilder {
 		return ClientCommandManager.literal("fuckhb").executes(a -> {
 			if (lastHBCommand != null) {
 				if (MinecraftClient.getInstance().player != null) {
-					MinecraftClient.getInstance().player.networkHandler.sendCommand(lastHBCommand);
+					MinecraftClient.getInstance().player.networkHandler.sendChatCommand(lastHBCommand);
 				}
 			} else {
 				a.getSource().sendError(Text.literal("还没红包可以抢"));
@@ -55,7 +55,7 @@ public class FuckHBCommand implements ICommandBuilder {
 		@Override public void execute(String s, String... strings) throws CommandException {
 			if (INSTANCE.getLastHBCommand() != null) {
 				if (MinecraftClient.getInstance().player != null) {
-					MinecraftClient.getInstance().player.networkHandler.sendCommand(INSTANCE.getLastHBCommand());
+					MinecraftClient.getInstance().player.networkHandler.sendChatCommand(INSTANCE.getLastHBCommand());
 				}
 			} else {
 				ctx.log("还没红包可以抢");
