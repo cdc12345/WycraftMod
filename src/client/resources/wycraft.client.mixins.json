@@ -6,6 +6,8 @@
   "client": [
     "MixinCommandContextImpl",
     "MixinImportantWarningsWidget",
+    "MixinKeyboardInput",
+    "MixinMinecraftClient",
     "PlayerListHudAccessor"
   ],
   "injectors": {
