@@ -63,6 +63,7 @@ public class WycraftConfig {
 	@Expose public int probability = 40;
 	@Expose public String chatCommandPrefixFormat = "@%s ";
 	@Expose public JsonObject mappedCmd;
+	@Expose public boolean disableREINotification = true;
 
 	public List<ActionEntry> logList = new ArrayList<>();
 

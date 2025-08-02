@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.tutorial.TutorialStep;
 import net.minecraft.text.Text;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
@@ -70,6 +71,10 @@ public class WycraftClient implements ClientModInitializer {
 		});
 
 		WycraftConfig.loadConfig(getMyName());
+		//移除烦人的教学
+		MinecraftClient.getInstance().execute(() -> {
+			MinecraftClient.getInstance().getTutorialManager().setStep(TutorialStep.NONE);
+		});
 	}
 
 	private void initClientCommands() {

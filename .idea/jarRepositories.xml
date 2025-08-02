@@ -51,5 +51,10 @@
       <option name="name" value="3arthMaven" />
       <option name="url" value="https://3arthqu4ke.github.io/maven" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://maven.shedaniel.me" />
+    </remote-repository>
   </component>
 </project>

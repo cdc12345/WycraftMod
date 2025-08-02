@@ -39,6 +39,9 @@ repositories {
         name '3arthMaven'
         url 'https://3arthqu4ke.github.io/maven'
     }
+    repositories {
+        maven { url "https://maven.shedaniel.me" }
+    }
 }
 
 dependencies {
@@ -49,6 +52,9 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     compileOnly 'me.earth.headlessmc:headlessmc-api:2.1.0'
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
 }
 
 processResources {
