@@ -15,10 +15,12 @@ public class TpAutoVisitor implements IEventVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(TpAutoVisitor.class);
 
 	@Override public void visitClickEvent(ClickEvent clickEvent, EventContext context) {
+		if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.IGNORE) {
+			return;
+		}
 		var handler = context.handler();
 		if (clickEvent instanceof ClickEvent.RunCommand(String command)) {
 			if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.DENY) {
-
 				if (command.startsWith("/cmi tpdeny")) {
 					handler.ifPresent(a -> a.sendChatCommand(command.substring(1)));
 					context.wycraftClient().delayCommand();

@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.StringIdentifiable;
 
 public enum TPPolicy implements StringIdentifiable {
-	DENY, OWNER, ALL;
+	DENY, OWNER, ALL, IGNORE;
 
 	public static final Codec<TPPolicy> CODEC = StringIdentifiable.createCodec(TPPolicy::values);
 
