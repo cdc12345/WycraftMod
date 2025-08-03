@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 public class WycraftClient implements ClientModInitializer {
 
+	public static String feedbackPrefix = "[WycraftMod]";
 	private final Logger LOG = LoggerFactory.getLogger(WycraftClient.class);
 
 	private boolean delay = false;

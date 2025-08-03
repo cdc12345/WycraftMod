@@ -1,11 +1,17 @@
 {
   "schemaVersion": 1,
-  "id": "redpack",
+  "id": "wycraft",
   "version": "${version}",
-  "name": "RedPack",
+  "name": "Wycraft Tools",
   "description": "some tools",
-  "authors": [],
-  "contact": {},
+  "authors": [
+    "cdc1234"
+  ],
+  "contact": {
+    "homepage": "https://github.com/cdc12345/WycraftMod",
+    "issues": "https://github.com/cdc12345/WycraftMod/issues",
+    "sources": "https://github.com/cdc12345/WycraftMod"
+  },
   "license": "GPL-3.0",
   "environment": "client",
   "accessWidener": "wycraft.accesswidener",
@@ -28,5 +34,15 @@
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "minecraft": "${minecraft_version}"
+  },
+  "icon": "assets/wycraft/icon.png",
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.github_releases": "https://github.com/cdc12345/WycraftMod/releases"
+      },
+      "badges": [],
+      "update_checker": false
+    }
   }
 }

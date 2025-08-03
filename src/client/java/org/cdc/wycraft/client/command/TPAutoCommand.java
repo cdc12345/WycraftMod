@@ -7,8 +7,10 @@ import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.argument.TPPolicyArgumentType;
+import org.cdc.wycraft.client.WycraftClient;
 import org.cdc.wycraft.utils.TPPolicy;
 
 import java.util.List;
@@ -31,11 +33,13 @@ public class TPAutoCommand implements ICommandBuilder {
 
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("tpauto").executes(a -> {
-			a.getSource().sendFeedback(Text.literal("AutoTpa: ").append(getTPPolicy().name()));
+			a.getSource().sendFeedback(Text.literal(WycraftClient.feedbackPrefix).withColor(Colors.LIGHT_YELLOW)
+					.append(Text.literal("AutoTpa: ").append(getTPPolicy().name()).withColor(Colors.WHITE)));
 			return 0;
 		}).then(ClientCommandManager.argument("policy", TPPolicyArgumentType.tpPolicy()).executes(a -> {
 			setTPPolicy(TPPolicyArgumentType.getTPPolicy(a, "policy"));
-			a.getSource().sendFeedback(Text.literal("AutoTpa: ").append(getTPPolicy().name()));
+			a.getSource().sendFeedback(Text.literal(WycraftClient.feedbackPrefix).withColor(Colors.LIGHT_YELLOW)
+					.append(Text.literal("AutoTpa: ").append(getTPPolicy().name())));
 			return 0;
 		}));
 	}
