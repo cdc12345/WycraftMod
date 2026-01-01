@@ -27,7 +27,7 @@ public class HeadlessMCWhoAmICommand extends AbstractCommand {
 
 	private String getWorldName(World world) {
 		if (MinecraftClient.getInstance().getCurrentServerEntry() != null) {
-			return MinecraftClient.getInstance().getCurrentServerEntry().label.getString();
+			return MinecraftClient.getInstance().getCurrentServerEntry().address;
 		} else {
 			return world.getRegistryKey().getValue().getPath();
 		}

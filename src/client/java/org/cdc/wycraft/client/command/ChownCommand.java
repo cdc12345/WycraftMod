@@ -1,6 +1,5 @@
 package org.cdc.wycraft.client.command;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.AbstractCommand;
@@ -11,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.WycraftClient;
+import org.cdc.wycraft.client.command.argument.ClientPlayerListArgumentType;
 
 import java.util.List;
 import java.util.Map;
@@ -23,8 +23,8 @@ public enum ChownCommand implements ICommandBuilder {
 		return ClientCommandManager.literal("chown").executes(a -> {
 			a.getSource().sendFeedback(Text.literal("Owner: ").append(getOwner()));
 			return 0;
-		}).then(ClientCommandManager.argument("owner", StringArgumentType.string()).executes(a -> {
-			setOwner(StringArgumentType.getString(a, "owner"));
+		}).then(ClientCommandManager.argument("owner", new ClientPlayerListArgumentType()).executes(a -> {
+			setOwner(ClientPlayerListArgumentType.getPlayerName(a, "owner"));
 			a.getSource().sendFeedback(Text.literal("Owner: ").append(getOwner()));
 			return 0;
 		}));

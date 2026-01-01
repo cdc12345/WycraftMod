@@ -1,7 +1,6 @@
 package org.cdc.wycraft.client;
 
 import com.google.gson.JsonElement;
-import dev.architectury.event.events.client.ClientPlayerEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -78,13 +77,6 @@ public class WycraftClient implements ClientModInitializer {
 				}
 			}
 			return command;
-		});
-		ClientPlayerEvent.CLIENT_PLAYER_RESPAWN.register((clientPlayerEntity, clientPlayerEntity1) -> {
-			if (MinecraftClient.getInstance().getNetworkHandler() != null
-					&& !WycraftConfig.INSTANCE.respawnCommand.isEmpty()) {
-				MinecraftClient.getInstance().getNetworkHandler()
-						.sendChatCommand(WycraftConfig.INSTANCE.respawnCommand);
-			}
 		});
 
 		WycraftConfig.loadConfig(getMyName());
