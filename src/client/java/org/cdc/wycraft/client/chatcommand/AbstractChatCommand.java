@@ -6,6 +6,7 @@ import org.cdc.wycraft.WycraftConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -71,6 +72,10 @@ public abstract class AbstractChatCommand {
 	}
 
 	public abstract ExecuteResult execute0(ChatCommandContext context, String[] args);
+
+	public List<String> onTabCompletation(ChatCommandContext context, String[] args) {
+		return Collections.emptyList();
+	}
 
 	public record ChatCommandContext(@NotNull String sender, @NotNull String message, @NotNull String owner,
 									 @NotNull ClientPlayerEntity rob, @NotNull ClientPlayNetworkHandler handler) {}

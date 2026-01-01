@@ -1,10 +1,12 @@
 package org.cdc.wycraft.client;
 
 import com.google.gson.JsonElement;
+import dev.architectury.event.events.client.ClientPlayerEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.text.Text;
@@ -12,6 +14,7 @@ import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.chatcommand.*;
 import org.cdc.wycraft.client.command.*;
+import org.cdc.wycraft.client.utils.BaritoneInitializer;
 import org.cdc.wycraft.client.visitor.EconomicVisitor;
 import org.cdc.wycraft.client.visitor.EventTextVisitor;
 import org.cdc.wycraft.client.visitor.ITextVisitor;
@@ -42,6 +45,10 @@ public class WycraftClient implements ClientModInitializer {
 	@Override public void onInitializeClient() {
 		LOG.info("Starting");
 
+		if (FabricLoader.getInstance().isModLoaded("baritones")) {
+			BaritoneInitializer.resetConfigs();
+		}
+
 		initChatCommands();
 		initSiblingVisitors();
 		initClientCommands();
@@ -52,6 +59,7 @@ public class WycraftClient implements ClientModInitializer {
 				EconomicVisitor.getInstance().addIncome("10.0", text.getString());
 			});
 		}
+
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
 			LOG.debug(text.toString());
 			List<String> list = new ArrayList<>();
@@ -70,6 +78,13 @@ public class WycraftClient implements ClientModInitializer {
 				}
 			}
 			return command;
+		});
+		ClientPlayerEvent.CLIENT_PLAYER_RESPAWN.register((clientPlayerEntity, clientPlayerEntity1) -> {
+			if (MinecraftClient.getInstance().getNetworkHandler() != null
+					&& !WycraftConfig.INSTANCE.respawnCommand.isEmpty()) {
+				MinecraftClient.getInstance().getNetworkHandler()
+						.sendChatCommand(WycraftConfig.INSTANCE.respawnCommand);
+			}
 		});
 
 		WycraftConfig.loadConfig(getMyName());

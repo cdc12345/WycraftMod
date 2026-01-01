@@ -64,6 +64,7 @@ public class WycraftConfig {
 	@Expose public String chatCommandPrefixFormat = "@%s ";
 	@Expose public JsonObject mappedCmd;
 	@Expose public boolean disableREINotification = true;
+	@Expose public String respawnCommand = "home safepoint";
 
 	public List<ActionEntry> logList = new ArrayList<>();
 

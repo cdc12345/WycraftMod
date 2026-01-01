@@ -17,12 +17,19 @@ public class HeadlessMCWhoAmICommand extends AbstractCommand {
 		if (MinecraftClient.getInstance().player != null) {
 			ClientPlayerEntity clientPlayerEntity = MinecraftClient.getInstance().player;
 			BlockPos pos = clientPlayerEntity.getBlockPos();
-			ctx.log(clientPlayerEntity.getName().getString() + ":X: " + pos.getX() + ",Y: " + pos.getY() + ",Z: "
+			ctx.log(clientPlayerEntity.getName().getString() + ": X: " + pos.getX() + ",Y: " + pos.getY() + ",Z: "
 					+ pos.getZ() + ",World: " + getWorldName(clientPlayerEntity.getWorld()));
+			var hungry = clientPlayerEntity.getHungerManager();
+			ctx.log("Health: %s, Food: %s, Saturation: %s".formatted(clientPlayerEntity.getHealth(),
+					hungry.getFoodLevel(), hungry.getSaturationLevel()));
 		}
 	}
 
 	private String getWorldName(World world) {
-		return world.getRegistryKey().getValue().getPath();
+		if (MinecraftClient.getInstance().getCurrentServerEntry() != null) {
+			return MinecraftClient.getInstance().getCurrentServerEntry().label.getString();
+		} else {
+			return world.getRegistryKey().getValue().getPath();
+		}
 	}
 }

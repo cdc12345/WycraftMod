@@ -9,8 +9,6 @@ import org.cdc.wycraft.utils.TPPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 public class TpAutoVisitor implements IEventVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(TpAutoVisitor.class);
 
@@ -32,23 +30,24 @@ public class TpAutoVisitor implements IEventVisitor {
 				if (command.startsWith("/cmi tpaccept")) {
 					String sender = StringUtils.getSender(context.whole().getString());
 					LOG.info("{} 请求tp", sender);
-					dealAccept(clickEvent, context, handler, sender);
+					handler.ifPresent(handler1->dealAccept(clickEvent, context, handler1, sender));
+
 				} else if (command.startsWith("/huskhomes:tpaccept")) {
 					String sender = command.replaceFirst("/huskhomes:tpaccept ", "").trim();
-					dealAccept(clickEvent, context, handler, sender);
+					handler.ifPresent(handler1->dealAccept(clickEvent, context, handler1, sender));
 				}
 			}
 		}
 	}
 
 	private static void dealAccept(ClickEvent clickEvent, EventContext context,
-			Optional<ClientPlayNetworkHandler> handler, String sender) {
+			ClientPlayNetworkHandler handler, String sender) {
 		if (clickEvent instanceof ClickEvent.RunCommand(String command)) {
 			if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.ALL) {
-				handler.ifPresent(a -> a.sendChatCommand(command.substring(1)));
+				handler.sendChatCommand(command.substring(1));
 			} else if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.OWNER && WycraftConfig.INSTANCE.owner.equals(
 					sender)) {
-				handler.ifPresent(a -> a.sendChatCommand(command.substring(1)));
+				handler.sendChatCommand(command.substring(1));
 			}
 			context.wycraftClient().delayCommand();
 		}

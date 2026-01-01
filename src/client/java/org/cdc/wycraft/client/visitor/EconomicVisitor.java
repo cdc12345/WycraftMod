@@ -20,6 +20,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.cdc.wycraft.client.WycraftClient.getMyName;
 
@@ -62,23 +63,28 @@ public class EconomicVisitor implements ITextVisitor {
 
 	@Override public void visit(Text sibling, VisitorContext textContext) {
 		var prefix = "[雾雨经济]";
-		var str = textContext.whole().getString();
-		if (sibling.getString().contains(prefix)) {
-			String work = str.replace(prefix, "").trim();
-			//income
-			if (work.contains("给予你") || work.contains("收到转账")) {
-				String keyword = "(给予你 |收到转账 )";
-				String amount = str.split(keyword)[1].trim();
-				addIncome(amount, str);
-				WycraftConfig.saveConfig(getMyName());
-				return;
+		var triggerKey = "经济";
+		var str = Objects.requireNonNullElse(textContext.whole().getString(), "");
+		if (Objects.requireNonNullElse(sibling.getString(), "").contains(triggerKey)) {
+			if (sibling.getString().contains(prefix)) {
+				String work = str.replace(prefix, "").trim();
+				//income
+				if (work.contains("给予你") || work.contains("收到转账")) {
+					String keyword = "(给予你 |收到转账 )";
+					String amount = str.split(keyword)[1].trim();
+					addIncome(amount, str);
+					WycraftConfig.saveConfig(getMyName());
+					return;
+				}
+				if (work.contains("你转账给")) {
+					String keyword = "(游戏币)";
+					String amount = str.split(keyword)[1].trim();
+					addOutcome("-" + amount, str);
+					WycraftConfig.saveConfig(getMyName());
+					return;
+				}
 			}
-			if (work.contains("你转账给")) {
-				String keyword = "(游戏币)";
-				String amount = str.split(keyword)[1].trim();
-				addOutcome("-" + amount, str);
-				WycraftConfig.saveConfig(getMyName());
-			}
+			addEconomicEntry("unknown", "0", str);
 		}
 	}
 
@@ -89,7 +95,9 @@ public class EconomicVisitor implements ITextVisitor {
 	public void addEconomicEntry(String actionType, String result, String backup) {
 		getLogList().add(
 				new ActionEntry(DateUtils.getDefaultFormatter().format(Instant.now()), actionType, result, backup));
-		WycraftConfig.saveConfig(WycraftClient.getMyName());
+		if (getLogList().size() % 5 == 0) {
+			WycraftConfig.saveConfig(WycraftClient.getMyName());
+		}
 	}
 
 	public void addIncome(String result, String backup) {
