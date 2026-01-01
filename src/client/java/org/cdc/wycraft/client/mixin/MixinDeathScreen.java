@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-@Mixin(DeathScreen.class) public class MixinDeathScreen {
+@Mixin(DeathScreen.class) public abstract class MixinDeathScreen {
 
 	@Shadow private final List<ButtonWidget> buttons = Lists.newArrayList();
 

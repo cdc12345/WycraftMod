@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
@@ -38,6 +39,8 @@ public class WycraftClient implements ClientModInitializer {
 	private final List<AbstractChatCommand> chatCommands = new ArrayList<>();
 	private final List<ITextVisitor> siblingVisitor = new ArrayList<>();
 	public final int DELAY_TIME = 20;
+
+	public static ServerInfo serverInfo;
 
 	public static boolean LieAboutMovingForward;
 
