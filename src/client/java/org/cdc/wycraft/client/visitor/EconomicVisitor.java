@@ -69,7 +69,7 @@ public class EconomicVisitor implements ITextVisitor {
 		var triggerKey = "经济";
 		var str = Objects.requireNonNullElse(textContext.whole().getString(), "");
 		if (Objects.requireNonNullElse(sibling.getString(), "").contains(triggerKey)) {
-			if (sibling.getString().contains(prefix)) {
+			if (str.contains(prefix)) {
 				String work = str.replace(prefix, "").trim();
 				//income
 				if (work.contains("给予你") || work.contains("收到转账")) {

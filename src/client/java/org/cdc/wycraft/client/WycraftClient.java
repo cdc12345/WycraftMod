@@ -15,6 +15,7 @@ import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.chatcommand.*;
 import org.cdc.wycraft.client.command.*;
 import org.cdc.wycraft.client.utils.BaritoneInitializer;
+import org.cdc.wycraft.client.visitor.EconomicVisitor;
 import org.cdc.wycraft.client.visitor.EventTextVisitor;
 import org.cdc.wycraft.client.visitor.ITextVisitor;
 import org.cdc.wycraft.utils.StringUtils;
@@ -112,7 +113,7 @@ public class WycraftClient implements ClientModInitializer {
 
 	private void initSiblingVisitors() {
 		siblingVisitor.add(new EventTextVisitor());
-		//		siblingVisitor.add(EconomicVisitor.getInstance());
+		siblingVisitor.add(EconomicVisitor.getInstance());
 	}
 
 	private void forEachSib(Text whole, List<String> printList) {
