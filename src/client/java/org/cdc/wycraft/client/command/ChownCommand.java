@@ -43,6 +43,7 @@ public enum ChownCommand implements ICommandBuilder {
 
 		public SubCommand(HeadlessMc ctx) {
 			super(ctx, "chown", "Change the owner of robot");
+			args.put("<player>", "player's name");
 		}
 
 		@Override public void execute(String s, String... strings) throws CommandException {

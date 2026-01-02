@@ -8,6 +8,7 @@ import org.cdc.wycraft.client.command.*;
 import java.util.ArrayList;
 
 public class HeadlessInitializer {
+
 	public static boolean init = false;
 
 	public static void initHeadlessCommand(ArrayList<Command> commands, HeadlessMc ctx) {
@@ -23,5 +24,6 @@ public class HeadlessInitializer {
 			BaritoneInitializer.registerHeadlessCommands(commands, ctx);
 		}
 		init = true;
+
 	}
 }

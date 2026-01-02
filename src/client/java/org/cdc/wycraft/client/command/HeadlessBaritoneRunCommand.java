@@ -13,6 +13,7 @@ import java.util.Map;
 public class HeadlessBaritoneRunCommand extends AbstractCommand {
 	public HeadlessBaritoneRunCommand(HeadlessMc ctx, String name) {
 		super(ctx, name, "Baritone's command");
+		args.put("<command>", "baritone's command");
 	}
 
 	@Override public void execute(String line, String... args) throws CommandException {

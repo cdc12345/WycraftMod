@@ -7,6 +7,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.utils.HeadlessInitializer;
+import org.cdc.wycraft.utils.LogsDao;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 					MinecraftClient.getInstance().getNetworkHandler()
 							.sendChatCommand(WycraftConfig.INSTANCE.respawnCommand);
 				}
+				LogsDao.getInstance().addLog(LogsDao.DEATH, "respawn", "empty");
 			});
 	}
 

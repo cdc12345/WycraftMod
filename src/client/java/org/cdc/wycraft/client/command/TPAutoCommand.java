@@ -66,7 +66,7 @@ public class TPAutoCommand implements ICommandBuilder {
 
 		public SubCommand(HeadlessMc ctx) {
 			super(ctx, "tpauto", "Change pp policy");
-			this.args.put("policy", "The policy of TPAuto");
+			this.args.put("<policy>", "The policy of TPAuto");
 		}
 
 		@Override public void execute(String s, String... strings) throws CommandException {

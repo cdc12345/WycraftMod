@@ -24,6 +24,9 @@ import java.util.Objects;
 
 import static org.cdc.wycraft.client.WycraftClient.getMyName;
 
+/**
+ * 我也不知道为什么无法正常运行，总之给他关了（
+ */
 public class EconomicVisitor implements ITextVisitor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EconomicVisitor.class);
 
@@ -84,7 +87,7 @@ public class EconomicVisitor implements ITextVisitor {
 					return;
 				}
 			}
-			addEconomicEntry("unknown", "0", str);
+			addEconomicEntry(LogsDao.ECONOMIC_PROBLEM, "0", str);
 		}
 	}
 

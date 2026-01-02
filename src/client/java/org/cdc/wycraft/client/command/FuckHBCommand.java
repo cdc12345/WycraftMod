@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cdc.wycraft.utils.LogsDao;
 
 public class FuckHBCommand implements ICommandBuilder {
 	private static FuckHBCommand INSTANCE;
@@ -44,6 +45,8 @@ public class FuckHBCommand implements ICommandBuilder {
 	public void setLastHBCommand(String lastHBCommand) {
 		LOGGER.info("抢红包{}", lastHBCommand);
 		this.lastHBCommand = lastHBCommand;
+
+		LogsDao.getInstance().addLog(LogsDao.HB, "record", lastHBCommand);
 	}
 
 	public static class SubCommand extends AbstractCommand {

@@ -21,7 +21,7 @@ public class EventTextVisitor implements ITextVisitor {
 		var hoverEvent = sibling.getStyle().getHoverEvent();
 		var clickEvent = sibling.getStyle().getClickEvent();
 
-		if (clickEvent != null && context.wycraftClient().isNotDelay()) {
+		if (clickEvent != null) {
 			eventVisitors.forEach(a -> {
 				a.visitClickEvent(clickEvent,
 						new IEventVisitor.EventContext(context.whole(), sibling, context.handler(),
@@ -31,7 +31,7 @@ public class EventTextVisitor implements ITextVisitor {
 				context.printList().add(sibling.getString() + ":" + clickEvent.getAction().name() + ":" + command);
 			}
 		}
-		if (hoverEvent != null && context.wycraftClient().isNotDelay()) {
+		if (hoverEvent != null) {
 			eventVisitors.forEach(a -> {
 				a.visitHoverEvent(hoverEvent,
 						new IEventVisitor.EventContext(context.whole(), sibling, context.handler(),

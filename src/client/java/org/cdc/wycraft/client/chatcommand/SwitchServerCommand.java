@@ -19,9 +19,9 @@ public class SwitchServerCommand extends AbstractChatCommand {
 	@Override public ExecuteResult execute0(ChatCommandContext context, String[] args) {
 		String destination = args[0];
 		LOG.info(destination);
-		int index = serverName.indexOf(destination);
-		if (index > 0 && index % 2 == 0) {
-			var command = serverName.get(index + 1);
+		int index = serverName.indexOf(destination) + 1;
+		if (index % 2 == 1) {
+			var command = serverName.get(index);
 			context.handler().sendChatCommand(command);
 			context.handler().sendChatMessage("好的，我马上到");
 			return ExecuteResult.SUCCESS;

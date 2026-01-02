@@ -15,7 +15,6 @@ import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.chatcommand.*;
 import org.cdc.wycraft.client.command.*;
 import org.cdc.wycraft.client.utils.BaritoneInitializer;
-import org.cdc.wycraft.client.visitor.EconomicVisitor;
 import org.cdc.wycraft.client.visitor.EventTextVisitor;
 import org.cdc.wycraft.client.visitor.ITextVisitor;
 import org.cdc.wycraft.utils.StringUtils;
@@ -40,28 +39,31 @@ public class WycraftClient implements ClientModInitializer {
 	private final List<ITextVisitor> siblingVisitor = new ArrayList<>();
 	public final int DELAY_TIME = 20;
 
+	// 记录上一个服务器,方便重连
 	public static ServerInfo serverInfo;
 
 	public static boolean LieAboutMovingForward;
+	public static boolean headless = false;
 
 	@Override public void onInitializeClient() {
 		LOG.info("Starting");
 
-		if (FabricLoader.getInstance().isModLoaded("baritones")) {
+		//插件分为无头模式和有头模式
+		if (FabricLoader.getInstance().isModLoaded("baritone") && FabricLoader.getInstance()
+				.isModLoaded("headlessmc")) {
+			headless = true;
 			BaritoneInitializer.resetConfigs();
+			initChatCommands();
 		}
 
-		initChatCommands();
 		initSiblingVisitors();
 		initClientCommands();
 
 		if (Wycraft.isDebug()) {
 			ClientReceiveMessageEvents.CHAT.register((text, signedMessage, gameProfile, parameters, instant) -> {
 				checkChatCommand(text.getString());
-				EconomicVisitor.getInstance().addIncome("10.0", text.getString());
 			});
 		}
-
 		ClientReceiveMessageEvents.GAME.register((text, b) -> {
 			LOG.debug(text.toString());
 			List<String> list = new ArrayList<>();
@@ -110,7 +112,7 @@ public class WycraftClient implements ClientModInitializer {
 
 	private void initSiblingVisitors() {
 		siblingVisitor.add(new EventTextVisitor());
-		siblingVisitor.add(EconomicVisitor.getInstance());
+		//		siblingVisitor.add(EconomicVisitor.getInstance());
 	}
 
 	private void forEachSib(Text whole, List<String> printList) {
