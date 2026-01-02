@@ -5,9 +5,9 @@ import net.minecraft.text.Text;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.WycraftClient;
+import org.cdc.wycraft.client.utils.LogsDao;
 import org.cdc.wycraft.utils.ActionEntry;
 import org.cdc.wycraft.utils.DateUtils;
-import org.cdc.wycraft.utils.LogsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

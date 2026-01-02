@@ -10,7 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.cdc.wycraft.utils.LogsDao;
+import org.cdc.wycraft.client.utils.LogsDao;
 
 public class FuckHBCommand implements ICommandBuilder {
 	private static FuckHBCommand INSTANCE;

@@ -1,9 +1,9 @@
 package org.cdc.wycraft.client.chatcommand;
 
 import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.client.utils.LogsDao;
 import org.cdc.wycraft.client.visitor.EconomicVisitor;
 import org.cdc.wycraft.utils.DateUtils;
-import org.cdc.wycraft.utils.LogsDao;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

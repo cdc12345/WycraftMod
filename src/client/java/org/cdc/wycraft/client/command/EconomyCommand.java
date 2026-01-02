@@ -7,8 +7,8 @@ import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
+import org.cdc.wycraft.client.utils.LogsDao;
 import org.cdc.wycraft.utils.ActionEntry;
-import org.cdc.wycraft.utils.LogsDao;
 
 public class EconomyCommand implements ICommandBuilder {
 

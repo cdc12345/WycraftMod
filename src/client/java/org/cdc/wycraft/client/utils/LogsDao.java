@@ -1,11 +1,18 @@
-package org.cdc.wycraft.utils;
+package org.cdc.wycraft.client.utils;
 
 import org.cdc.wycraft.WycraftConfig;
+import org.cdc.wycraft.client.WycraftClient;
+import org.cdc.wycraft.utils.ActionEntry;
+import org.cdc.wycraft.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.List;
 
 public class LogsDao {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(LogsDao.class);
 	private static LogsDao INSTANCE;
 
 	public static LogsDao getInstance() {
@@ -43,8 +50,12 @@ public class LogsDao {
 	}
 
 	public void addLog(String actionType, String result, String backup) {
-		WycraftConfig.INSTANCE.logList.add(
-				new ActionEntry(DateUtils.getDefaultFormatter().format(Instant.now()), actionType, result, backup));
+		var log = new ActionEntry(DateUtils.getDefaultFormatter().format(Instant.now()), actionType, result, backup);
+		WycraftConfig.INSTANCE.logList.add(log);
+		LOGGER.info(log.toString());
+		if (WycraftConfig.INSTANCE.logList.size() % 5 == 0) {
+			WycraftConfig.saveConfig(WycraftClient.getMyName());
+		}
 	}
 
 }

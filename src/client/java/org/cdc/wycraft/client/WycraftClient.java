@@ -103,12 +103,14 @@ public class WycraftClient implements ClientModInitializer {
 	}
 
 	private void initChatCommands() {
-		chatCommands.add(new WhereAreYouCommand());
-		chatCommands.add(ThursdayCommand.getInstance());
-		chatCommands.add(new TPPolicyChangeCommand());
-		chatCommands.add(new GiveMeMoneyCommand());
-		chatCommands.add(new SwitchServerCommand());
-		chatCommands.add(new ThrowItemCommand());
+		if (headless) {
+			chatCommands.add(new WhereAreYouCommand());
+			chatCommands.add(ThursdayCommand.getInstance());
+			chatCommands.add(new TPPolicyChangeCommand());
+			chatCommands.add(new GiveMeMoneyCommand());
+			chatCommands.add(new SwitchServerCommand());
+			chatCommands.add(new ThrowItemCommand());
+		}
 	}
 
 	private void initSiblingVisitors() {

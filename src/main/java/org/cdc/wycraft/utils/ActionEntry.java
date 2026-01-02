@@ -9,4 +9,9 @@ public record ActionEntry(@Expose String date, @Expose String action, @Expose St
 		}
 		return date;
 	}
+
+	@Override public String toString() {
+		return "ActionEntry{" + "date='" + date + '\'' + ", action='" + action + '\'' + ", result='" + result + '\''
+				+ ", backup='" + backup + '\'' + '}';
+	}
 }

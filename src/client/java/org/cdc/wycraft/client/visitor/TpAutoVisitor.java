@@ -4,7 +4,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import org.cdc.wycraft.WycraftConfig;
-import org.cdc.wycraft.utils.LogsDao;
+import org.cdc.wycraft.client.utils.LogsDao;
 import org.cdc.wycraft.utils.StringUtils;
 import org.cdc.wycraft.utils.TPPolicy;
 
@@ -27,10 +27,12 @@ public class TpAutoVisitor implements IEventVisitor {
 					LogsDao.getInstance().addLog(LogsDao.TP, "deny", command);
 				}
 			} else {
-				if (command.contains("tpaccept")) {
+				if (command.startsWith("/cmi tpaccept")) {
 					String sender = StringUtils.getSender(context.whole().getString());
 					handler.ifPresent(handler1 -> dealAccept(clickEvent, context, handler1, sender));
-					LogsDao.getInstance().addLog(LogsDao.TP, "accept", command);
+				} else if (command.startsWith("/huskhomes:tpaccept")) {
+					String sender = command.replaceFirst("/huskhomes:tpaccept ", "").trim();
+					handler.ifPresent(handler1 -> dealAccept(clickEvent, context, handler1, sender));
 				}
 			}
 		}
@@ -41,9 +43,11 @@ public class TpAutoVisitor implements IEventVisitor {
 		if (clickEvent instanceof ClickEvent.RunCommand(String command)) {
 			if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.ALL) {
 				handler.sendChatCommand(command.substring(1));
+				LogsDao.getInstance().addLog(LogsDao.TP, "accept", command);
 			} else if (WycraftConfig.INSTANCE.autoTpaPolicy == TPPolicy.OWNER && WycraftConfig.INSTANCE.owner.equals(
 					sender)) {
 				handler.sendChatCommand(command.substring(1));
+				LogsDao.getInstance().addLog(LogsDao.TP, "accept", command);
 			}
 			context.wycraftClient().delayCommand();
 		}
