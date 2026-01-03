@@ -86,6 +86,10 @@ public class WycraftClient implements ClientModInitializer {
 		});
 
 		WycraftConfig.loadConfig(getMyName());
+
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			WycraftConfig.saveConfig(WycraftClient.getMyName());
+		}));
 	}
 
 	private void initClientCommands() {

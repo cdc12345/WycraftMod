@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "org.cdc.wycraft.client.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_17",
   "client": [
     "MixinCommandContextImpl",
     "MixinConnectScreen",
@@ -17,6 +17,5 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "MixinQuitCommand"
   ]
 }
