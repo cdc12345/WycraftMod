@@ -45,6 +45,7 @@ public class EconomicVisitor implements ITextVisitor {
 				if (!Files.exists(config.getParent())) {
 					Files.createDirectory(config.getParent());
 				}
+				//保存账本
 				Files.copy(new ByteArrayInputStream(gson.toJson(getLogList()).getBytes(StandardCharsets.UTF_8)), config,
 						StandardCopyOption.REPLACE_EXISTING);
 				LOGGER.info(config.toString());
