@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class WycraftClient implements ClientModInitializer {
@@ -35,6 +36,8 @@ public class WycraftClient implements ClientModInitializer {
 	private final Logger LOG = LoggerFactory.getLogger(WycraftClient.class);
 
 	private boolean delay = false;
+	private final ThreadPoolExecutor delayedExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS,
+			new LinkedBlockingQueue<>());
 
 	private final List<AbstractChatCommand> chatCommands = new ArrayList<>();
 	private final List<ITextVisitor> siblingVisitor = new ArrayList<>();
@@ -182,7 +185,16 @@ public class WycraftClient implements ClientModInitializer {
 	public void delayCommand() {
 		delay = true;
 
-		CompletableFuture.delayedExecutor(DELAY_TIME, TimeUnit.MILLISECONDS).execute(() -> delay = false);
+		if (delayedExecutor.isTerminated()) {
+			delayedExecutor.execute(() -> {
+				try {
+					Thread.sleep(DELAY_TIME);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+				delay = false;
+			});
+		}
 	}
 
 	public boolean isNotDelay() {
