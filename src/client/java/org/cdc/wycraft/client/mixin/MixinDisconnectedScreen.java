@@ -11,6 +11,8 @@ import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.client.WycraftClient;
 import org.cdc.wycraft.client.utils.HeadlessInitializer;
 import org.cdc.wycraft.client.utils.LogsDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,6 +23,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Mixin(DisconnectedScreen.class) public abstract class MixinDisconnectedScreen extends Screen {
+
+	@Unique private final Logger LOG = LoggerFactory.getLogger(MixinDisconnectedScreen.class);
 
 	@Shadow @Final private DisconnectionInfo info;
 
@@ -37,14 +41,9 @@ import java.util.concurrent.TimeUnit;
 	public void tick() {
 		if (HeadlessInitializer.init || Wycraft.isDebug()) {
 			if (WycraftClient.serverInfo != null) {
-				if (wait) {
-					LogsDao.getInstance().addLog(LogsDao.DISCONNECT, "reconnect", info.reason().getString());
-					final var info = WycraftClient.serverInfo;
-					ConnectScreen.connect(this, MinecraftClient.getInstance(),
-							ServerAddress.parse(WycraftClient.serverInfo.address), info, false, null);
-					wait = false;
-				} else if (executor.isTerminated()) {
+				if (executor.getActiveCount() == 0) {
 					executor.execute(() -> {
+						LOG.info("Reconnecting");
 						try {
 							//时间延长到30s
 							Thread.sleep(30000L);
@@ -53,6 +52,13 @@ import java.util.concurrent.TimeUnit;
 						}
 						wait = true;
 					});
+				}
+				if (wait) {
+					LogsDao.getInstance().addLog(LogsDao.DISCONNECT, "reconnect", info.reason().getString());
+					final var info = WycraftClient.serverInfo;
+					ConnectScreen.connect(this, MinecraftClient.getInstance(),
+							ServerAddress.parse(WycraftClient.serverInfo.address), info, false, null);
+					wait = false;
 				}
 			}
 		}

@@ -185,8 +185,9 @@ public class WycraftClient implements ClientModInitializer {
 	public void delayCommand() {
 		delay = true;
 
-		if (delayedExecutor.isTerminated()) {
+		if (delayedExecutor.getActiveCount() == 0) {
 			delayedExecutor.execute(() -> {
+				LOG.info("We are delaying the all");
 				try {
 					Thread.sleep(DELAY_TIME);
 				} catch (InterruptedException e) {
