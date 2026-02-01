@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class) public abstract class MixinMinecraftClient {
-	@Inject(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;openChatScreen(Ljava/lang/String;)V"))
+	@Inject(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;openChatScreen(Lnet/minecraft/client/gui/hud/ChatHud$ChatMethod;)V"))
 	void moveChatBoi(CallbackInfo ci) {
 		// if the player is holding W
 		if (MinecraftClient.getInstance().options.forwardKey.isPressed()) {
