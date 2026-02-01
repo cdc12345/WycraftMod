@@ -24,8 +24,7 @@ public class HeadlessMCListCommand extends AbstractCommand {
 				ctx.log("玩家人数: " + list.size());
 			}
 			list.forEach(a -> ctx.log(
-					Objects.requireNonNullElse(a.getDisplayName(), Text.literal(a.getProfile().getName()))
-							.getString()));
+					Objects.requireNonNullElse(a.getDisplayName(), Text.literal(a.getProfile().name())).getString()));
 		}
 	}
 }

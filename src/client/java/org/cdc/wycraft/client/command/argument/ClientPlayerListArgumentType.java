@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +25,7 @@ public class ClientPlayerListArgumentType implements ArgumentType<String> {
 
 	@Override
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-		Objects.requireNonNull(Minecraft.getInstance().getConnection()).getListedOnlinePlayers().forEach(a -> {
+		Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerList().forEach(a -> {
 			builder.suggest(Objects.requireNonNull(a.getProfile().name()));
 		});
 		return builder.buildFuture();

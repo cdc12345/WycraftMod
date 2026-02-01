@@ -7,7 +7,7 @@ import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.chat.Component;
+import net.minecraft.text.Text;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.WycraftClient;
 import org.cdc.wycraft.client.command.argument.ClientPlayerListArgumentType;
@@ -21,11 +21,11 @@ public enum ChownCommand implements ICommandBuilder {
 
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("chown").executes(a -> {
-			a.getSource().sendFeedback(Component.literal("Owner: ").append(getOwner()));
+			a.getSource().sendFeedback(Text.literal("Owner: ").append(getOwner()));
 			return 0;
 		}).then(ClientCommandManager.argument("owner", new ClientPlayerListArgumentType()).executes(a -> {
 			setOwner(ClientPlayerListArgumentType.getPlayerName(a, "owner"));
-			a.getSource().sendFeedback(Component.literal("Owner: ").append(getOwner()));
+			a.getSource().sendFeedback(Text.literal("Owner: ").append(getOwner()));
 			return 0;
 		}));
 	}

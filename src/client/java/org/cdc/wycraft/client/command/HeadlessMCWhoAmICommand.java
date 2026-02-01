@@ -18,7 +18,7 @@ public class HeadlessMCWhoAmICommand extends AbstractCommand {
 			ClientPlayerEntity clientPlayerEntity = MinecraftClient.getInstance().player;
 			BlockPos pos = clientPlayerEntity.getBlockPos();
 			ctx.log(clientPlayerEntity.getName().getString() + ": X: " + pos.getX() + ",Y: " + pos.getY() + ",Z: "
-					+ pos.getZ() + ",World: " + getWorldName(clientPlayerEntity.getWorld()));
+					+ pos.getZ() + ",World: " + getWorldName(clientPlayerEntity.getEntityWorld()));
 			var hungry = clientPlayerEntity.getHungerManager();
 			ctx.log("Health: %s, Food: %s, Saturation: %s".formatted(clientPlayerEntity.getHealth(),
 					hungry.getFoodLevel(), hungry.getSaturationLevel()));
@@ -26,10 +26,6 @@ public class HeadlessMCWhoAmICommand extends AbstractCommand {
 	}
 
 	private String getWorldName(World world) {
-		if (MinecraftClient.getInstance().getCurrentServerEntry() != null) {
-			return MinecraftClient.getInstance().getCurrentServerEntry().address;
-		} else {
-			return world.getRegistryKey().getValue().getPath();
-		}
+		return world.getRegistryKey().getValue().getPath();
 	}
 }

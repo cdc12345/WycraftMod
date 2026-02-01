@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 	@Inject(method = "init()V", at = @At("RETURN")) public void autoRespawn(CallbackInfo ci) {
 		if (HeadlessInitializer.init || Wycraft.isDebug())
 			CompletableFuture.delayedExecutor(3, TimeUnit.SECONDS).execute(() -> {
-				buttons.getFirst().onPress();
+				buttons.getFirst().onPress(null);
 				if (MinecraftClient.getInstance().getNetworkHandler() != null
 						&& !WycraftConfig.INSTANCE.respawnCommand.isEmpty()) {
 					MinecraftClient.getInstance().getNetworkHandler()

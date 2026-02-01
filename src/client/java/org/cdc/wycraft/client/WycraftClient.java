@@ -203,6 +203,6 @@ public class WycraftClient implements ClientModInitializer {
 	}
 
 	public static String getMyName() {
-		return MinecraftClient.getInstance().getGameProfile().getName();
+		return MinecraftClient.getInstance().getGameProfile().name();
 	}
 }
