@@ -1,7 +1,6 @@
 package org.cdc.wycraft.client.visitor;
 
 import com.google.gson.reflect.TypeToken;
-import net.minecraft.text.Text;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.WycraftClient;
@@ -21,6 +20,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.network.chat.Component;
 
 import static org.cdc.wycraft.client.WycraftClient.getMyName;
 
@@ -65,7 +65,7 @@ public class EconomicVisitor implements ITextVisitor {
 		});
 	}
 
-	@Override public void visit(Text sibling, VisitorContext textContext) {
+	@Override public void visit(Component sibling, VisitorContext textContext) {
 		var prefix = "[雾雨经济]";
 		var triggerKey = "经济";
 		var str = Objects.requireNonNullElse(textContext.whole().getString(), "");

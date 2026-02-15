@@ -22,8 +22,8 @@ public class SwitchServerCommand extends AbstractChatCommand {
 		int index = serverName.indexOf(destination) + 1;
 		if (index % 2 == 1) {
 			var command = serverName.get(index);
-			context.handler().sendChatCommand(command);
-			context.handler().sendChatMessage("好的，我马上到");
+			context.handler().sendCommand(command);
+			context.handler().sendChat("好的，我马上到");
 			return ExecuteResult.SUCCESS;
 		}
 		return ExecuteResult.FAIL;

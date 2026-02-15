@@ -6,8 +6,8 @@ import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cdc.wycraft.client.utils.LogsDao;
@@ -28,11 +28,11 @@ public class FuckHBCommand implements ICommandBuilder {
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("fuckhb").executes(a -> {
 			if (lastHBCommand != null) {
-				if (MinecraftClient.getInstance().player != null) {
-					MinecraftClient.getInstance().player.networkHandler.sendChatCommand(lastHBCommand);
+				if (Minecraft.getInstance().player != null) {
+					Minecraft.getInstance().player.connection.sendCommand(lastHBCommand);
 				}
 			} else {
-				a.getSource().sendError(Text.literal("还没红包可以抢"));
+				a.getSource().sendError(Component.literal("还没红包可以抢"));
 			}
 			return 0;
 		});
@@ -57,8 +57,8 @@ public class FuckHBCommand implements ICommandBuilder {
 
 		@Override public void execute(String s, String... strings) throws CommandException {
 			if (INSTANCE.getLastHBCommand() != null) {
-				if (MinecraftClient.getInstance().player != null) {
-					MinecraftClient.getInstance().player.networkHandler.sendChatCommand(INSTANCE.getLastHBCommand());
+				if (Minecraft.getInstance().player != null) {
+					Minecraft.getInstance().player.connection.sendCommand(INSTANCE.getLastHBCommand());
 				}
 			} else {
 				ctx.log("还没红包可以抢");

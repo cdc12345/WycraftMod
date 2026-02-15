@@ -6,10 +6,10 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.network.chat.Component;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.chatcommand.*;
@@ -44,7 +44,7 @@ public class WycraftClient implements ClientModInitializer {
 	public final int DELAY_TIME = 20;
 
 	// 记录上一个服务器,方便重连
-	public static ServerInfo serverInfo;
+	public static ServerData serverInfo;
 
 	public static boolean LieAboutMovingForward;
 	public static boolean headless = false;
@@ -125,11 +125,11 @@ public class WycraftClient implements ClientModInitializer {
 		siblingVisitor.add(EconomicVisitor.getInstance());
 	}
 
-	private void forEachSib(Text whole, List<String> printList) {
-		for (Text part : whole.getSiblings()) {
-			ClientPlayNetworkHandler handler;
-			if (MinecraftClient.getInstance().player != null) {
-				handler = MinecraftClient.getInstance().player.networkHandler;
+	private void forEachSib(Component whole, List<String> printList) {
+		for (Component part : whole.getSiblings()) {
+			ClientPacketListener handler;
+			if (Minecraft.getInstance().player != null) {
+				handler = Minecraft.getInstance().player.connection;
 			} else {
 				handler = null;
 			}
@@ -148,36 +148,34 @@ public class WycraftClient implements ClientModInitializer {
 			return;
 		}
 
-		if (MinecraftClient.getInstance().player != null) {
+		if (Minecraft.getInstance().player != null) {
 			String myName = getMyName();
 			LOG.debug(sender);
-			var handler = MinecraftClient.getInstance().player.networkHandler;
-			if (handler != null) {
-				//检查延迟，防止一次性执行太多命令导致客户端或者服务器出现问题（发送了太多消息错误）
-				if (delay) {
-					return;
-				}
+			var handler = Minecraft.getInstance().player.connection;
+			//检查延迟，防止一次性执行太多命令导致客户端或者服务器出现问题（发送了太多消息错误）
+			if (delay) {
+				return;
+			}
 
-				chatCommands.forEach(a -> {
-					var context = new AbstractChatCommand.ChatCommandContext(sender, message,
-							WycraftConfig.INSTANCE.owner, MinecraftClient.getInstance().player, handler);
-					if (a.permit(context)) {
-						if (a.execute(context) == AbstractChatCommand.ExecuteResult.SUCCESS) {
-							LOG.info(a.getCommandParent());
-							delayCommand();
-						}
+			chatCommands.forEach(a -> {
+				var context = new AbstractChatCommand.ChatCommandContext(sender, message, WycraftConfig.INSTANCE.owner,
+						Minecraft.getInstance().player, handler);
+				if (a.permit(context)) {
+					if (a.execute(context) == AbstractChatCommand.ExecuteResult.SUCCESS) {
+						LOG.info(a.getCommandParent());
+						delayCommand();
 					}
-				});
-				var prefix = "@" + myName + " ";
-				if (!sender.equals(WycraftConfig.INSTANCE.owner) && !WycraftConfig.INSTANCE.openToPublic) {
-					return;
 				}
-				//这是个特殊的提权命令
-				var openCommand = prefix + "对公开放";
-				if (message.startsWith(openCommand)) {
-					WycraftConfig.INSTANCE.openToPublic = !WycraftConfig.INSTANCE.openToPublic;
-					delayCommand();
-				}
+			});
+			var prefix = "@" + myName + " ";
+			if (!sender.equals(WycraftConfig.INSTANCE.owner) && !WycraftConfig.INSTANCE.openToPublic) {
+				return;
+			}
+			//这是个特殊的提权命令
+			var openCommand = prefix + "对公开放";
+			if (message.startsWith(openCommand)) {
+				WycraftConfig.INSTANCE.openToPublic = !WycraftConfig.INSTANCE.openToPublic;
+				delayCommand();
 			}
 		}
 	}
@@ -203,6 +201,6 @@ public class WycraftClient implements ClientModInitializer {
 	}
 
 	public static String getMyName() {
-		return MinecraftClient.getInstance().getGameProfile().name();
+		return Minecraft.getInstance().getGameProfile().name();
 	}
 }

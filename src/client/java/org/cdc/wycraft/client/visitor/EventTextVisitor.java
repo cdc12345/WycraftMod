@@ -1,9 +1,8 @@
 package org.cdc.wycraft.client.visitor;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ public class EventTextVisitor implements ITextVisitor {
 		this.eventVisitors.add(new AutoHBVisitor());
 	}
 
-	@Override public void visit(Text sibling, VisitorContext context) {
+	@Override public void visit(Component sibling, VisitorContext context) {
 		var hoverEvent = sibling.getStyle().getHoverEvent();
 		var clickEvent = sibling.getStyle().getClickEvent();
 
@@ -28,7 +27,7 @@ public class EventTextVisitor implements ITextVisitor {
 								context.wycraftClient()));
 			});
 			if (clickEvent instanceof ClickEvent.RunCommand(String command)) {
-				context.printList().add(sibling.getString() + ":" + clickEvent.getAction().name() + ":" + command);
+				context.printList().add(sibling.getString() + ":" + clickEvent.action().name() + ":" + command);
 			}
 		}
 		if (hoverEvent != null) {
@@ -37,10 +36,8 @@ public class EventTextVisitor implements ITextVisitor {
 						new IEventVisitor.EventContext(context.whole(), sibling, context.handler(),
 								context.wycraftClient()));
 			});
-			if (hoverEvent instanceof HoverEvent.ShowText(Text value)) {
-				context.printList().add(sibling.getString() + ":" + (value != null ?
-						value.getString() :
-						CommandLine.Help.Ansi.Style.bg_red.on() + "None" + CommandLine.Help.Ansi.Style.reset.on()));
+			if (hoverEvent instanceof HoverEvent.ShowText(Component value)) {
+				context.printList().add(sibling.getString() + ":" + value.getString());
 			}
 		}
 	}

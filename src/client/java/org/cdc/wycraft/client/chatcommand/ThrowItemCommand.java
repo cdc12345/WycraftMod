@@ -1,16 +1,16 @@
 package org.cdc.wycraft.client.chatcommand;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.item.ItemStack;
 
 public class ThrowItemCommand extends AbstractChatCommand {
 	private static final Logger LOG = LogManager.getLogger(ThrowItemCommand.class);
@@ -31,29 +31,29 @@ public class ThrowItemCommand extends AbstractChatCommand {
 		LOG.info(ref.itemName);
 		AtomicReference<ItemStack> result = new AtomicReference<>();
 		while (context.rob().getInventory().contains(a -> {
-			boolean result1 = Objects.requireNonNullElse(a.getName(), Text.empty()).getString().contains(ref.itemName);
+			boolean result1 = Objects.requireNonNullElse(a.getHoverName(), Component.empty()).getString().contains(ref.itemName);
 			if (result1) {
 				result.set(a);
 			}
 			return result1;
 		})) {
 			var inv = context.rob().getInventory();
-			int slot = inv.getSlotWithStack(result.get());
+			int slot = inv.findSlotMatchingItem(result.get());
 			var player = context.rob();
 			LOG.info(slot);
 			if (slot >= 9 && slot < 36) {
 				InventoryScreen inventoryScreen = new InventoryScreen(player);
-				MinecraftClient.getInstance().setScreen(inventoryScreen);
-				if (MinecraftClient.getInstance().interactionManager != null) {
-					MinecraftClient.getInstance().interactionManager.clickSlot(
-							inventoryScreen.getScreenHandler().syncId, slot, 1, SlotActionType.THROW, player);
+				Minecraft.getInstance().setScreen(inventoryScreen);
+				if (Minecraft.getInstance().gameMode != null) {
+					Minecraft.getInstance().gameMode.handleInventoryMouseClick(
+							inventoryScreen.getMenu().containerId, slot, 1, ClickType.THROW, player);
 				}
-				MinecraftClient.getInstance().setScreen(null);
+				Minecraft.getInstance().setScreen(null);
 			}
 			if (slot > -1) {
 				inv.setSelectedSlot(slot);
-				context.handler().sendPacket(new UpdateSelectedSlotC2SPacket(inv.getSelectedSlot()));
-				player.dropSelectedItem(true);
+				context.handler().send(new ServerboundSetCarriedItemPacket(inv.getSelectedSlot()));
+				player.drop(true);
 			}
 		}
 		return ExecuteResult.SUCCESS;

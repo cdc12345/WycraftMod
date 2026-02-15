@@ -1,7 +1,5 @@
 package org.cdc.wycraft.client.visitor;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.command.FuckHBCommand;
 import org.slf4j.Logger;
@@ -9,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
 
 public class AutoHBVisitor implements IEventVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(AutoHBVisitor.class);
@@ -32,7 +32,7 @@ public class AutoHBVisitor implements IEventVisitor {
 						}
 						//伪装成人来抢红包（
 						CompletableFuture.delayedExecutor(500, TimeUnit.MILLISECONDS).execute(() -> {
-							context.handler().ifPresent(a -> a.sendChatCommand(command));
+							context.handler().ifPresent(a -> a.sendCommand(command));
 						});
 						context.wycraftClient().delayCommand();
 					}

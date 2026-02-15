@@ -1,13 +1,13 @@
 package org.cdc.wycraft.client.chatcommand;
 
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
 import org.cdc.wycraft.WycraftConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
 
 public abstract class AbstractChatCommand {
 	protected String commandParent;
@@ -73,7 +73,7 @@ public abstract class AbstractChatCommand {
 	public abstract ExecuteResult execute0(ChatCommandContext context, String[] args);
 
 	public record ChatCommandContext(@NotNull String sender, @NotNull String message, @NotNull String owner,
-									 @NotNull ClientPlayerEntity rob, @NotNull ClientPlayNetworkHandler handler) {}
+									 @NotNull LocalPlayer rob, @NotNull ClientPacketListener handler) {}
 
 	public enum ExecuteResult {
 		SUCCESS, FAIL

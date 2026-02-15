@@ -6,8 +6,8 @@ import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.WycraftClient;
 import org.cdc.wycraft.client.command.argument.ClientPlayerListArgumentType;
@@ -21,11 +21,11 @@ public enum ChownCommand implements ICommandBuilder {
 
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("chown").executes(a -> {
-			a.getSource().sendFeedback(Text.literal("Owner: ").append(getOwner()));
+			a.getSource().sendFeedback(Component.literal("Owner: ").append(getOwner()));
 			return 0;
 		}).then(ClientCommandManager.argument("owner", new ClientPlayerListArgumentType()).executes(a -> {
 			setOwner(ClientPlayerListArgumentType.getPlayerName(a, "owner"));
-			a.getSource().sendFeedback(Text.literal("Owner: ").append(getOwner()));
+			a.getSource().sendFeedback(Component.literal("Owner: ").append(getOwner()));
 			return 0;
 		}));
 	}
@@ -58,11 +58,10 @@ public enum ChownCommand implements ICommandBuilder {
 		@Override public void getCompletions(String line, List<Map.Entry<String, String>> completions, String... args) {
 			if (line.startsWith(name)) {
 				if (args.length == 1 || args.length == 2) {
-					Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerList()
-							.forEach(a -> {
-								completions.add(Map.entry(a.getProfile().name(),
-										Objects.requireNonNull(a.getDisplayName()).getString()));
-							});
+					Objects.requireNonNull(Minecraft.getInstance().getConnection()).getOnlinePlayers().forEach(a -> {
+						completions.add(Map.entry(a.getProfile().name(),
+								Objects.requireNonNull(a.getTabListDisplayName()).getString()));
+					});
 				}
 			}
 		}

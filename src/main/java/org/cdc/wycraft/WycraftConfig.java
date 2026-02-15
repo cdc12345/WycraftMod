@@ -57,9 +57,9 @@ public class WycraftConfig {
 	@Expose public TPPolicy autoTpaPolicy = TPPolicy.DENY;
 	@Expose public String owner = "";
 	@Expose(serialize = false) public boolean openToPublic = false;
-	//´Ë²ÎÊýÓÃÀ´Î±×°ÇÀºì°üµÄÊ§°Ü¿ÉÄÜ
+	//ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î±×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü¿ï¿½ï¿½ï¿½
 	@Expose public boolean maybeFail = true;
-	//ÇÀºì°üµÄ¸ÅÂÊ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½
 	@Expose public int probability = 40;
 	@Expose public String chatCommandPrefixFormat = "@%s ";
 	@Expose public JsonObject mappedCmd;

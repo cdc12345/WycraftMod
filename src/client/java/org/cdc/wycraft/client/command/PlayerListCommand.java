@@ -6,8 +6,8 @@ import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import org.cdc.wycraft.client.mixin.PlayerListHudAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +36,12 @@ public class PlayerListCommand implements ICommandBuilder {
 		});
 	}
 
-	private Text getHeader() {
-		return ((PlayerListHudAccessor) MinecraftClient.getInstance().inGameHud.getPlayerListHud()).getHeader();
+	private Component getHeader() {
+		return ((PlayerListHudAccessor) Minecraft.getInstance().gui.getTabList()).getHeader();
 	}
 
-	private Text getFooter() {
-		return ((PlayerListHudAccessor) MinecraftClient.getInstance().inGameHud.getPlayerListHud()).getFooter();
+	private Component getFooter() {
+		return ((PlayerListHudAccessor) Minecraft.getInstance().gui.getTabList()).getFooter();
 	}
 
 	public static class SubCommand extends AbstractCommand {

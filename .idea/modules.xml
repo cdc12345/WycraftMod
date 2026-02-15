@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/RedPack.iml" filepath="$PROJECT_DIR$/.idea/modules/RedPack.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/RedPack.client.iml" filepath="$PROJECT_DIR$/.idea/modules/RedPack.client.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/RedPack.main.iml" filepath="$PROJECT_DIR$/.idea/modules/RedPack.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/RedPack.test.iml" filepath="$PROJECT_DIR$/.idea/modules/RedPack.test.iml" />

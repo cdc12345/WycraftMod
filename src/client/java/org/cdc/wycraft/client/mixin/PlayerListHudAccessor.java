@@ -1,14 +1,14 @@
 package org.cdc.wycraft.client.mixin;
 
-import net.minecraft.client.gui.hud.PlayerListHud;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.PlayerTabOverlay;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Pseudo @Mixin(PlayerListHud.class) public interface PlayerListHudAccessor {
+@Pseudo @Mixin(PlayerTabOverlay.class) public interface PlayerListHudAccessor {
 
-	@Accessor("footer") Text getFooter();
+	@Accessor("footer") Component getFooter();
 
-	@Accessor("header") Text getHeader();
+	@Accessor("header") Component getHeader();
 }

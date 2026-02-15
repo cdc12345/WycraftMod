@@ -1,12 +1,5 @@
 package org.cdc.wycraft.client.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.DisconnectedScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
-import net.minecraft.client.network.ServerAddress;
-import net.minecraft.network.DisconnectionInfo;
-import net.minecraft.text.Text;
 import org.cdc.wycraft.Wycraft;
 import org.cdc.wycraft.client.WycraftClient;
 import org.cdc.wycraft.client.utils.HeadlessInitializer;
@@ -21,12 +14,19 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ConnectScreen;
+import net.minecraft.client.gui.screens.DisconnectedScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.resolver.ServerAddress;
+import net.minecraft.network.DisconnectionDetails;
+import net.minecraft.network.chat.Component;
 
 @Mixin(DisconnectedScreen.class) public abstract class MixinDisconnectedScreen extends Screen {
 
 	@Unique private final Logger LOG = LoggerFactory.getLogger(MixinDisconnectedScreen.class);
 
-	@Shadow @Final private DisconnectionInfo info;
+	@Shadow @Final private DisconnectionDetails details;
 
 	@Unique private boolean wait = false;
 
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 	@Unique private final ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
 			new LinkedBlockingQueue<>());
 
-	protected MixinDisconnectedScreen(Text title) {
+	protected MixinDisconnectedScreen(Component title) {
 		super(title);
 	}
 
@@ -54,10 +54,10 @@ import java.util.concurrent.TimeUnit;
 					});
 				}
 				if (wait) {
-					LogsDao.getInstance().addLog(LogsDao.DISCONNECT, "reconnect", info.reason().getString());
+					LogsDao.getInstance().addLog(LogsDao.DISCONNECT, "reconnect", details.reason().getString());
 					final var info = WycraftClient.serverInfo;
-					ConnectScreen.connect(this, MinecraftClient.getInstance(),
-							ServerAddress.parse(WycraftClient.serverInfo.address), info, false, null);
+					ConnectScreen.startConnecting(this, Minecraft.getInstance(),
+							ServerAddress.parseString(WycraftClient.serverInfo.ip), info, false, null);
 					wait = false;
 				}
 			}

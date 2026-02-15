@@ -32,7 +32,7 @@ public class ThursdayCommand extends AbstractChatCommand {
 	@Override public ExecuteResult execute0(ChatCommandContext context, String[] args) {
 		LocalDate now = LocalDate.now();
 		if (now.getDayOfWeek() == DayOfWeek.THURSDAY && !isThursdayDelay()) {
-			context.handler().sendChatCommand("hb send-vault 50 1");
+			context.handler().sendCommand("hb send-vault 50 1");
 			delayThursday();
 		}
 		return ExecuteResult.SUCCESS;

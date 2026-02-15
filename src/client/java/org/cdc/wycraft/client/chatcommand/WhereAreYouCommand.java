@@ -6,8 +6,8 @@ public class WhereAreYouCommand extends AbstractChatCommand {
 	}
 
 	@Override public ExecuteResult execute0(ChatCommandContext context, String[] args) {
-		var pos = context.rob().getBlockPos();
-		context.handler().sendChatMessage("X: " + pos.getX() + ",Y: " + pos.getY() + ",Z:" + pos.getZ());
+		var pos = context.rob().blockPosition();
+		context.handler().sendChat("X: " + pos.getX() + ",Y: " + pos.getY() + ",Z:" + pos.getZ());
 		return ExecuteResult.SUCCESS;
 	}
 }

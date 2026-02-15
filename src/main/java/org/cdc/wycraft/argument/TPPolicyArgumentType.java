@@ -1,10 +1,10 @@
 package org.cdc.wycraft.argument;
 
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.argument.EnumArgumentType;
+import net.minecraft.commands.arguments.StringRepresentableArgument;
 import org.cdc.wycraft.utils.TPPolicy;
 
-public class TPPolicyArgumentType extends EnumArgumentType<TPPolicy> {
+public class TPPolicyArgumentType extends StringRepresentableArgument<TPPolicy> {
 
 	public static TPPolicyArgumentType tpPolicy() {
 		return new TPPolicyArgumentType();

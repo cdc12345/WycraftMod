@@ -6,8 +6,7 @@ import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
+import net.minecraft.network.chat.Component;
 import org.cdc.wycraft.WycraftConfig;
 import org.cdc.wycraft.client.WycraftClient;
 
@@ -24,8 +23,8 @@ public class LoadConfigCommand implements ICommandBuilder {
 	@Override public LiteralArgumentBuilder<FabricClientCommandSource> buildCommand() {
 		return ClientCommandManager.literal("loadConfig").executes(a -> {
 			WycraftConfig.loadConfig(WycraftClient.getMyName());
-			a.getSource().sendFeedback(Text.literal(WycraftClient.feedbackPrefix).withColor(Colors.LIGHT_YELLOW)
-					.append(Text.literal("Load the config")));
+			a.getSource().sendFeedback(Component.literal(WycraftClient.feedbackPrefix).withColor(0xFFFFFF55)
+					.append(Component.literal("Load the config")));
 			return 0;
 		});
 	}

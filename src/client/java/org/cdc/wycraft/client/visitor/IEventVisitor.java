@@ -1,19 +1,19 @@
 package org.cdc.wycraft.client.visitor;
 
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
 import org.cdc.wycraft.client.WycraftClient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 
 public interface IEventVisitor {
 	void visitClickEvent(ClickEvent clickEvent, EventContext context);
 
 	void visitHoverEvent(HoverEvent hoverEvent, EventContext context);
 
-	record EventContext(Text whole, Text eventText, Optional<ClientPlayNetworkHandler> handler,
+	record EventContext(Component whole, Component eventText, Optional<ClientPacketListener> handler,
 						@NotNull WycraftClient wycraftClient) {}
 }
